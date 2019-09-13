@@ -6,6 +6,18 @@
 //row major memory for matrix implementation
 #define elem(m, i, j) (m->arr[(i * m->col) + j])
 
+//Utility Func
+
+//Swap data of two variables
+void swap(dtype *a, dtype *b)
+{
+    *a = *a + *b;
+    *b = *a - *b;
+    *a = *a - *b;
+}
+
+
+// Struct Matrix
 typedef struct matrix
 {
     dtype *arr;
@@ -13,12 +25,19 @@ typedef struct matrix
     long col;
 } matrix;
 
+// Struct pivotdata to manage data about pivots in rref()
 typedef struct pivotdata
 {
     long num_pivot;
     long *pivotindex;
 } pivotdata;
 
+
+
+// Matrix Management Function
+
+
+//Initialise Data inside Matrix
 void constructmatrix(matrix *m, long row1, long col1)
 {
 
@@ -27,6 +46,7 @@ void constructmatrix(matrix *m, long row1, long col1)
     m->arr = calloc(m->row * m->col, sizeof(dtype));
 }
 
+//Initialise Matrix in memory
 matrix *init(long row, long col)
 {
     matrix *m = calloc(1, sizeof(matrix));
@@ -34,6 +54,7 @@ matrix *init(long row, long col)
     return m;
 }
 
+//Produce and Identity matrix
 void eye(matrix *m)
 {
     long dim = (m->row <= m->col) ? m->row : m->col;
@@ -43,13 +64,7 @@ void eye(matrix *m)
     }
 }
 
-void swap(dtype *a, dtype *b)
-{
-    *a = *a + *b;
-    *b = *a - *b;
-    *a = *a - *b;
-}
-
+//Row Swap Operation
 void rowswap(matrix *m, long r1, long r2)
 {
     for (long i = 0; i < m->col; i++)
@@ -58,8 +73,13 @@ void rowswap(matrix *m, long r1, long r2)
     }
 }
 
+//Input Function For Matrix
 matrix *input_matrix(matrix *m)
-{
+{   /*
+        takes String input of rows
+        tokenises it converts string to dtype(double as of now)
+        saves it in Matrix->arr(row Major type)
+    */
     char buf[BUFSIZ] = {0};
     char *token = NULL;
     const long NUMBASE = 10;
@@ -88,6 +108,7 @@ matrix *input_matrix(matrix *m)
     return m;
 }
 
+//Function to Print Data of Matrix
 void printmat(matrix *m)
 {
     for (long i = 0; i < m->row; i++)
@@ -100,6 +121,30 @@ void printmat(matrix *m)
     }
 }
 
+//Matrix Function to drop Cols
+matrix *dropcol(matrix *m, long colindex)
+{
+    long k = 0;
+    matrix *newm = init(m->row, m->col - 1);
+    for (long i = 0; i < m->row; i++)
+    {
+        k = 0;
+        for (long j = 0; j < m->col; j++)
+        {
+
+            if (j != colindex)
+            {
+                elem(newm, i, k) = elem(m, i, j);
+                k++;
+            }
+        }
+    }
+    free(m->arr);
+    free(m);
+    return newm;
+}
+
+//Subtract Rows r2=r2-r1 with pivot on diagonal (for U)
 void subrow(matrix *m, long r1, long r2)
 {
     double mul = elem(m, r2, r1) / elem(m, r1, r1);
@@ -115,6 +160,35 @@ void subrow(matrix *m, long r1, long r2)
     // return m;
 }
 
+// Matrix function to drop rows
+matrix *droprow(matrix *m, long row)
+{
+    matrix *newm = init(m->row - 1, m->col);
+    long k = 0;
+    long flag = 0;
+    for (long i = 0; i < m->row; i++)
+    {
+        for (long j = 0; j < m->col; j++)
+        {
+            if (i != row)
+            {
+                elem(newm, k, j) = elem(m, i, j);
+                flag = 1;
+            }
+        }
+        if (flag == 1)
+        {
+            k++;
+            flag = 0;
+        }
+    }
+    free(m->arr);
+    free(m);
+
+    return newm;
+}
+
+//Subtract Rows r2=r2-r1 with pivot not on diagonal (for R)
 void subrowR(matrix *m, long r1, long r2, long piv)
 {
     double mul = elem(m, r2, piv) / elem(m, r1, piv);
@@ -130,6 +204,7 @@ void subrowR(matrix *m, long r1, long r2, long piv)
     // return m;
 }
 
+//Scalar Multiplication on Rows Of Matrix
 void rowmulconst(matrix *m, long row, double scalar)
 {
     for (long i = 0; i < m->col; i++)
@@ -138,6 +213,7 @@ void rowmulconst(matrix *m, long row, double scalar)
     }
 }
 
+//Check If a Row is zero
 long iszerorow(matrix *m, long row, long aug)
 {
     long flag = 0;
@@ -151,6 +227,7 @@ long iszerorow(matrix *m, long row, long aug)
     return flag;
 }
 
+// Delete duplicate pivots in pivotindex array and reduce the value of num_pivot
 void normalizepivotdata(pivotdata *p)
 {
     for (long i = 0; i < p->num_pivot; i++)
@@ -176,6 +253,7 @@ void normalizepivotdata(pivotdata *p)
     }
 }
 
+//divide all rows by 1/pivot[row]
 void scalerref(matrix *m, long aug)
 {
     for (long i = 0; i < m->row; i++)
@@ -191,16 +269,16 @@ void scalerref(matrix *m, long aug)
     }
 }
 
+// Function to Compute RREF of a Matrix and return number of pivots and position of pivots
 pivotdata *rref(matrix *m, long aug)
 {
+    //initialise Pivotdata pointer in the memory
     pivotdata *ret;
     ret = calloc(1, sizeof(pivotdata));
     long dim = (m->row <= m->col) ? m->row : m->col;
     ret->pivotindex = calloc(dim, sizeof(long));
 
-    // matrix *I = mat_init();
-    // printf("Enter b:\n");
-    // mat_input(I);
+    //Logic to compute U.
     for (long i = 0; i < m->row - 1; i++)
     {
         if (elem(m, i, i) == 0)
@@ -224,12 +302,14 @@ pivotdata *rref(matrix *m, long aug)
             {
 
                 rowswap(m, j, i);
+
+                // debug comments
                 // printf("\n printed u debug %d %d \n",j,i);
                 // printmat(m);
                 // printf("\n\n ");
             }
         }
-
+        // Save Pivots
         ret->pivotindex[ret->num_pivot] = i;
         ret->num_pivot++;
         for (long k = i + 1; k < m->row; k++)
@@ -244,19 +324,10 @@ pivotdata *rref(matrix *m, long aug)
             }
         }
     }
-    // for (long i = 0; i < m->row; i++)
-    // {
-    //     if (elem(m, i, i) != 0 && elem(m, i, i) != 1)
-    //     {
-    //         double common = 1 / elem(m, i, i);
-    //         rowmulconst(m, i, common);
-    //     }
-    // }
 
-    printf("\n\n U \n");
-    printmat(m);
     // start calculation for R
 
+    //find first non zero row from botton and it first non zero element from left
     long rstart = 0;
     for (long i = m->row - 1; i > 0; i--)
     {
@@ -277,7 +348,10 @@ pivotdata *rref(matrix *m, long aug)
         }
     }
     // printf("\n %d %d\n", rstart, piv);
+
     long i=0,j=0,k=0;
+
+    //keep finding non zero pivots in non zero rows above
     for ( i = rstart; i > 0; i--)
     {   if (iszerorow(m, i, aug) != 1)
             {
@@ -313,10 +387,14 @@ pivotdata *rref(matrix *m, long aug)
         }
 
     }
+
     normalizepivotdata(ret);
     scalerref(m, aug);
+
     return ret;
 }
+
+//Matrix function to create an augmented matrix
 matrix *augmented_matrix(matrix *m, dtype *a)
 {
 
@@ -337,6 +415,7 @@ matrix *augmented_matrix(matrix *m, dtype *a)
     return new_m;
 }
 
+//Matrix utilty function to take input into augmented matrix
 matrix *input_augmentcolumn(matrix *m)
 {
     matrix *ret;
@@ -350,37 +429,11 @@ matrix *input_augmentcolumn(matrix *m)
     free(col);
     return ret;
 }
-void print_pivdata(pivotdata *aa)
-{
-    printf("\n %d \n", aa->num_pivot);
-    for (long i = 0; i < aa->num_pivot; i++)
-    {
-        printf("%d ", aa->pivotindex[i]);
-    }
-    printf("\n");
-}
-matrix *dropcol(matrix *m, long colindex)
-{
-    long k = 0;
-    matrix *newm = init(m->row, m->col - 1);
-    for (long i = 0; i < m->row; i++)
-    {
-        k = 0;
-        for (long j = 0; j < m->col; j++)
-        {
 
-            if (j != colindex)
-            {
-                elem(newm, i, k) = elem(m, i, j);
-                k++;
-            }
-        }
-    }
-    free(m->arr);
-    free(m);
-    return newm;
-}
 
+// Matrix function Specific for NULLSPACE calculation
+
+//drops pivot cols in F. i.e removes I from [I,F]
 matrix *dropcol_Fmaker(matrix *m, pivotdata *p)
 {
     matrix *newm = init(m->row, (m->col - (p->num_pivot)));
@@ -414,33 +467,8 @@ matrix *dropcol_Fmaker(matrix *m, pivotdata *p)
     return newm;
 }
 
-matrix *droprow(matrix *m, long row)
-{
-    matrix *newm = init(m->row - 1, m->col);
-    long k = 0;
-    long flag = 0;
-    for (long i = 0; i < m->row; i++)
-    {
-        for (long j = 0; j < m->col; j++)
-        {
-            if (i != row)
-            {
-                elem(newm, k, j) = elem(m, i, j);
-                flag = 1;
-            }
-        }
-        if (flag == 1)
-        {
-            k++;
-            flag = 0;
-        }
-    }
-    free(m->arr);
-    free(m);
 
-    return newm;
-}
-
+//drops all zero rows present in [I ,F] matrix
 matrix *drop_zerorows(matrix *m)
 {
     long flag = 0;
@@ -478,8 +506,7 @@ matrix *drop_zerorows(matrix *m)
     return m;
 }
 
-matrix make_nullspacematrix(matrix *r) { ; }
-
+//generates matrix w nullspace vectors using F at free rows and I at pivot cols
 matrix *nullspace(matrix *r, pivotdata *p, long aug)
 {
     matrix *f;
@@ -498,11 +525,18 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug)
 
     return f;
 }
-// void makeF(matrix *m, pivotdata *p)
-// {
-//
 
-// }
+
+//Utility for PivData
+void print_pivdata(pivotdata *aa)
+{
+    printf("\n %d \n", aa->num_pivot);
+    for (long i = 0; i < aa->num_pivot; i++)
+    {
+        printf("%d ", aa->pivotindex[i]);
+    }
+    printf("\n");
+}
 
 long main(long argc, char const *argv[])
 {
