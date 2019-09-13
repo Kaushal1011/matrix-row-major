@@ -253,6 +253,8 @@ pivotdata *rref(matrix *m, long aug)
     //     }
     // }
 
+    printf("\n\n U \n");
+    printmat(m);
     // start calculation for R
 
     long rstart = 0;
@@ -265,7 +267,7 @@ pivotdata *rref(matrix *m, long aug)
             break;
         }
     }
-    long piv;
+    long piv=0;
     for (long i = 0; i < m->col - aug; i++)
     {
         if (elem(m, rstart, i) != 0)
@@ -274,40 +276,42 @@ pivotdata *rref(matrix *m, long aug)
             break;
         }
     }
-    printf("\n %d %d\n ", rstart, piv);
-    for (long i = rstart; i > 0; i--)
-    {
-        for (long j = i - 1; j >= 0; j--)
-        {
-            if (elem(m, j, piv) != 0)
+    // printf("\n %d %d\n", rstart, piv);
+    long i=0,j=0,k=0;
+    for ( i = rstart; i > 0; i--)
+    {   if (iszerorow(m, i, aug) != 1)
             {
-                subrowR(m, i, j, piv);
-                ret->pivotindex[ret->num_pivot] = piv;
-                ret->num_pivot++;
-            }
-            // printf("\ninside rref\n");
-            // printmat(m);
-            // printf("\n\n");
-        }
-        while (iszerorow(m, i, aug) != 1)
-        {
-            if (i <= 1)
-                break;
-            i--;
-            // printf("\nsubtracted i\n");
-        }
-        if (i == 0)
-        {
+            // if (i < 1)
+            //     break;
             break;
-        }
+            // printf("\nsubtracted i\n");
+            }
 
-        for (long k = piv - 1; k > 0; k--)
+        for ( k = 0; k < piv; k++)
         {
             if (elem(m, i, k) != 0)
             {
                 piv = k;
+                // printf("\nrref calculation debug \n%d\n",piv);
+                break;
             }
         }
+
+
+        for ( j = i - 1; j >= 0; j--)
+        {  // printf("\ninside rref %d %d  elem\n",i,piv);
+            if (elem(m, j, piv) != 0)
+            {
+                subrowR(m, i, j, piv);
+                // printf("\nrref calculation debug subrow \n%d\n",piv);
+                ret->pivotindex[ret->num_pivot] = piv;
+                ret->num_pivot++;
+            }
+            // printf("\ninside rref %d %d elem\n",i,piv);
+            // printmat(m);
+            // printf("\n\n");
+        }
+
     }
     normalizepivotdata(ret);
     scalerref(m, aug);
@@ -511,7 +515,7 @@ long main(long argc, char const *argv[])
     printmat(m);
     print_pivdata(aa);
     matrix *f;
-    f = nullspace(m, aa);
+    f = nullspace(m, aa,1);
     // matrix *e=init(f->col,f->col);
     // eye(e);
     printf("\n");
