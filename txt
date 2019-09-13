@@ -1,0 +1,29 @@
+long rstart=0;
+    for(long i=m->row-1;i>0;i++)
+    {
+        if(iszerorow(m,i,aug)==1)
+        {
+            rstart=i;
+        }
+
+    }
+    long piv;
+    for(long i=0;i<m->col-aug-aug;i++)
+    {
+        if(elem(m,rstart,i)!=0)
+        {
+            piv=i;
+        }
+    }
+     for (long i = rstart; i > 0; i--)
+    {
+        for (long j = piv; j >= 0; j--)
+        {
+            if (elem(m, i,j) != 0 && elem(m, i, i) != 0)
+            {
+                subrow(m, i, j);
+                ret->pivotindex[ret->num_pivot]=i;
+                ret->num_pivot++;
+            }
+        }
+    }

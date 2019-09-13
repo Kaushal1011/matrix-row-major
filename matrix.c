@@ -114,6 +114,22 @@ void subrow(matrix *m, long r1, long r2)
     }
     // return m;
 }
+
+void subrowR(matrix *m, long r1, long r2,long piv)
+{
+    double mul = elem(m, r2, piv) / elem(m, r1, piv);
+    double arr[m->col];
+    for (long i = 0; i < m->col; i++)
+    {
+        arr[i] = elem(m, r1, i) * mul;
+    }
+    for (long i = 0; i < m->col; i++)
+    {
+        elem(m, r2, i) -= arr[i];
+    }
+    // return m;
+}
+
 void rowmulconst(matrix *m, long row, double scalar)
 {
     for (long i = 0; i < m->col; i++)
@@ -121,7 +137,20 @@ void rowmulconst(matrix *m, long row, double scalar)
         elem(m, row, i) *= scalar;
     }
 }
-pivotdata *rref(matrix *m)
+
+long iszerorow(matrix *m, long row,long aug)
+{
+    long flag=0;
+    for (long i=0;i<m->col-aug;i++)
+    {
+        if(elem(m,row,i)!=0)
+        {
+            flag=1;
+        }
+    }
+    return flag;
+}
+pivotdata *rref(matrix *m,long aug)
 {
     pivotdata *ret;
     ret = calloc(1, sizeof(pivotdata));
@@ -180,19 +209,66 @@ pivotdata *rref(matrix *m)
     }
     // U calculation is complete
     // check for last pivot
-
+    printmat(m);
+    printf("\n printed U");
     // start calculation for R
-    for (long i = m->row - 1; i > 0; i--)
+
+    long rstart=0;
+    for(long i=m->row-1;i>0;i--)
     {
-        for (long j = i - 1; j >= 0; j--)
+        // printf("\n %d \n",iszerorow(m,i,aug));
+        if(iszerorow(m,i,aug)==1)
         {
-            if (elem(m, j, i) != 0 && elem(m, i, i) != 0)
+            rstart=i;
+            break;
+        }
+
+    }
+    long piv;
+    for(long i=0;i<m->col-aug;i++)
+    {
+        if(elem(m,rstart,i)!=0)
+        {
+            piv=i;
+            break;
+        }
+    }
+    printf("\n %d %d\n ",rstart,piv);
+  for (long i = rstart; i > 0; i--)
+    {
+        for (long j = i-1; j >= 0; j--)
+        {
+                if(elem(m,j,piv)!=0)
+                {subrowR(m, i, j,piv);}
+                // printf("\ninside rref\n");
+                // printmat(m);
+                // printf("\n\n");
+                ret->pivotindex[ret->num_pivot]=i;
+                ret->num_pivot++;
+
+        }
+        while(iszerorow(m,i,aug)!=1)
+        {
+            if (i<=1)
+             break;
+            i--;
+            // printf("\nsubtracted i\n");
+
+
+        }
+        if(i==0)
+        {
+            break;
+        }
+
+        for(long k=piv-1;k>0;k--)
+        {
+            if(elem(m,i,k)!=0)
             {
-                subrow(m, i, j);
-                // ret->pivotindex[ret->num_pivot]=i;
-                // ret->num_pivot++;
+                piv=k;
             }
         }
+
     }
 
     return ret;
@@ -365,10 +441,18 @@ matrix *drop_zerorows(matrix *m)
 
 }
 
+matrix make_nullspacematrix(matrix *r){;}
+
 matrix *nullspace(matrix *r,pivotdata *p)
 {
-    matrix *f=dropcol_Fmaker(r,p);
-    f =drop_zerorows(f);
+    matrix *f;
+    f =drop_zerorows(r);
+    f=dropcol_Fmaker(f,p);
+    // multiplying all of F with -1 scalar
+    for(long i=0;i<f->row;i++)
+    {
+        rowmulconst(f,i,-1.0);
+    }
 
     return f;
 
@@ -387,16 +471,16 @@ long main(long argc, char const *argv[])
     pivotdata *aa;
     m = input_matrix(m);
     m = input_augmentcolumn(m);
-    aa = rref(m);
+    aa = rref(m,1);
     printmat(m);
     print_pivdata(aa);
     matrix *f;
     f = nullspace(m, aa);
-    matrix *e=init(f->col,f->col);
-    eye(e);
+    // matrix *e=init(f->col,f->col);
+    // eye(e);
     printf("\n");
     printmat(f);
-    printmat(e);
+    // printmat(e);
 
     free(m->arr);
     free(m);
