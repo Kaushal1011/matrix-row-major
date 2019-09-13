@@ -607,6 +607,5 @@ long main(long argc, char const *argv[])
     free(f);
     free(aa->pivotindex);
     free(aa);
-    // free(e);
     return 0;
 }
