@@ -19,7 +19,7 @@ typedef struct pivotdata
     long *pivotindex;
 } pivotdata;
 
-void constructmatrix(matrix *m, int row1, int col1)
+void constructmatrix(matrix *m, long row1, long col1)
 {
 
     m->row = row1;
@@ -27,7 +27,7 @@ void constructmatrix(matrix *m, int row1, int col1)
     m->arr = calloc(m->row * m->col, sizeof(dtype));
 }
 
-matrix *init(int row, int col)
+matrix *init(long row, long col)
 {
     matrix *m = calloc(1, sizeof(matrix));
     constructmatrix(m, row, col);
@@ -50,9 +50,9 @@ void swap(dtype *a, dtype *b)
     *a = *a - *b;
 }
 
-void rowswap(matrix *m, int r1, int r2)
+void rowswap(matrix *m, long r1, long r2)
 {
-    for (int i = 0; i < m->col; i++)
+    for (long i = 0; i < m->col; i++)
     {
         swap(&elem(m, r1, i), &elem(m, r2, i));
     }
@@ -62,8 +62,8 @@ matrix *input_matrix(matrix *m)
 {
     char buf[BUFSIZ] = {0};
     char *token = NULL;
-    const int NUMBASE = 10;
-    int row, col;
+    const long NUMBASE = 10;
+    long row, col;
     printf("Enter row and column of matrix seperated by space: ");
     fgets(buf, BUFSIZ, stdin);
     token = buf;
@@ -272,7 +272,7 @@ matrix *dropcol_Fmaker(matrix *m, pivotdata *p)
         k = 0;
         for (long j = 0; j < m->col; j++)
         {
-            int flag = 1;
+            long flag = 1;
             for (long z = 0; z < p->num_pivot; z++)
             {
                 if (j == p->pivotindex[z])
@@ -325,6 +325,10 @@ matrix *droprow(matrix *m, long row)
 matrix *drop_zerorows(matrix *m)
 {
     long flag=0;
+    long *arr;
+    long arrindex=0;
+    long initialrows=m->row;
+    arr=calloc(m->row,sizeof(long));
     for(long i=0;i<m->row;i++)
     {
         flag=0;
@@ -338,11 +342,25 @@ matrix *drop_zerorows(matrix *m)
         }
         if (flag==0)
         {
-           m= droprow(m,i);
-            i-=1;
+            arr[arrindex]=i;
+            arrindex++;
+
         }
 
+
     }
+    // for(long i=0;i<arrindex;i++)
+    // {
+    //     printf("\n %d %d\n",arr[i]);
+    // }
+    for(long i=0;i<arrindex;i++)
+    {
+
+       m= droprow(m,arr[i]-i);
+    }
+    free(arr);
+
+    return m;
 
 
 }
@@ -350,7 +368,8 @@ matrix *drop_zerorows(matrix *m)
 matrix *nullspace(matrix *r,pivotdata *p)
 {
     matrix *f=dropcol_Fmaker(r,p);
-    // drop_zerorows(f);
+    f =drop_zerorows(f);
+
     return f;
 
 
@@ -361,7 +380,7 @@ matrix *nullspace(matrix *r,pivotdata *p)
 
 // }
 
-int main(int argc, char const *argv[])
+long main(long argc, char const *argv[])
 {
     /* code */
     matrix *m;
