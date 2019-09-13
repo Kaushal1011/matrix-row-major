@@ -115,7 +115,7 @@ void subrow(matrix *m, long r1, long r2)
     // return m;
 }
 
-void subrowR(matrix *m, long r1, long r2,long piv)
+void subrowR(matrix *m, long r1, long r2, long piv)
 {
     double mul = elem(m, r2, piv) / elem(m, r1, piv);
     double arr[m->col];
@@ -138,19 +138,45 @@ void rowmulconst(matrix *m, long row, double scalar)
     }
 }
 
-long iszerorow(matrix *m, long row,long aug)
+long iszerorow(matrix *m, long row, long aug)
 {
-    long flag=0;
-    for (long i=0;i<m->col-aug;i++)
+    long flag = 0;
+    for (long i = 0; i < m->col - aug; i++)
     {
-        if(elem(m,row,i)!=0)
+        if (elem(m, row, i) != 0)
         {
-            flag=1;
+            flag = 1;
         }
     }
     return flag;
 }
-pivotdata *rref(matrix *m,long aug)
+
+void normalizepivotdata(pivotdata *p)
+{
+    for (long i = 0; i < p->num_pivot; i++)
+    {
+        for (long j = i + 1; j < p->num_pivot; j++)
+        {
+            /* If any duplicate found */
+            if (p->pivotindex[i] == p->pivotindex[j])
+            {
+                /* Delete the current duplicate element */
+                for (long k = j; k < p->num_pivot; k++)
+                {
+                    p->pivotindex[k] = p->pivotindex[k + 1];
+                }
+
+                /* Decrement size after removing duplicate element */
+                p->num_pivot--;
+
+                /* If shifting of elements occur then don't increment j */
+                j--;
+            }
+        }
+    }
+}
+
+pivotdata *rref(matrix *m, long aug)
 {
     pivotdata *ret;
     ret = calloc(1, sizeof(pivotdata));
@@ -165,43 +191,53 @@ pivotdata *rref(matrix *m,long aug)
         if (elem(m, i, i) == 0)
         {
             long j = 0;
+            long flag = 0;
             for (j = i + 1; j < m->row; j++)
             {
                 if (elem(m, j, i) != 0)
                 {
                     break;
+                    flag = 1;
                 }
             }
 
-            if (j == m->row)
+            if (j == m->row && flag == 0)
             {
                 break;
             }
             else
             {
+
                 rowswap(m, j, i);
+                // printf("\n printed u debug %d %d \n",j,i);
+                // printmat(m);
+                // printf("\n\n ");
             }
         }
 
         ret->pivotindex[ret->num_pivot] = i;
         ret->num_pivot++;
-        for (long j = i + 1; j < m->row; j++)
+        for (long k = i + 1; k < m->row; k++)
         {
-            if (elem(m, i, j) != 0)
+            // printf("\n printed u debug %d %d %d %lf\n ",i,k,m->row,elem(m,k,i));
+            if (elem(m, k, i) != 0)
             {
-                subrow(m, i, j);
-            }
-        }
-
-        for (long i = 0; i < m->row; i++)
-        {
-            if (elem(m, i, i) != 0 && elem(m, i, i) != 1)
-            {
-                double common = 1 / elem(m, i, i);
-                rowmulconst(m, i, common);
+                subrow(m, i, k);
+                // printf("\n printed u debug %d %d %d %lf\n ",i,k,m->row,elem(m,k,i));
+                // printmat(m);
+                // printf("\n\n");
             }
         }
     }
+    // for (long i = 0; i < m->row; i++)
+    // {
+    //     if (elem(m, i, i) != 0 && elem(m, i, i) != 1)
+    //     {
+    //         double common = 1 / elem(m, i, i);
+    //         rowmulconst(m, i, common);
+    //     }
+    // }
+
     if (elem(m, (m->row - 1), (m->row) - 1) != 0)
     {
         ret->pivotindex[ret->num_pivot] = (m->row) - 1;
@@ -209,68 +245,65 @@ pivotdata *rref(matrix *m,long aug)
     }
     // U calculation is complete
     // check for last pivot
-    printmat(m);
-    printf("\n printed U");
+    // printmat(m);
+    // printf("\n printed U debug");
     // start calculation for R
 
-    long rstart=0;
-    for(long i=m->row-1;i>0;i--)
+    long rstart = 0;
+    for (long i = m->row - 1; i > 0; i--)
     {
         // printf("\n %d \n",iszerorow(m,i,aug));
-        if(iszerorow(m,i,aug)==1)
+        if (iszerorow(m, i, aug) == 1)
         {
-            rstart=i;
+            rstart = i;
             break;
         }
-
     }
     long piv;
-    for(long i=0;i<m->col-aug;i++)
+    for (long i = 0; i < m->col - aug; i++)
     {
-        if(elem(m,rstart,i)!=0)
+        if (elem(m, rstart, i) != 0)
         {
-            piv=i;
+            piv = i;
             break;
         }
     }
-    printf("\n %d %d\n ",rstart,piv);
-  for (long i = rstart; i > 0; i--)
+    printf("\n %d %d\n ", rstart, piv);
+    for (long i = rstart; i > 0; i--)
     {
-        for (long j = i-1; j >= 0; j--)
+        for (long j = i - 1; j >= 0; j--)
         {
-                if(elem(m,j,piv)!=0)
-                {subrowR(m, i, j,piv);}
-                // printf("\ninside rref\n");
-                // printmat(m);
-                // printf("\n\n");
-                ret->pivotindex[ret->num_pivot]=i;
+            if (elem(m, j, piv) != 0)
+            {
+                subrowR(m, i, j, piv);
+                ret->pivotindex[ret->num_pivot] = piv;
                 ret->num_pivot++;
-
+            }
+            // printf("\ninside rref\n");
+            // printmat(m);
+            // printf("\n\n");
         }
-        while(iszerorow(m,i,aug)!=1)
+        while (iszerorow(m, i, aug) != 1)
         {
-            if (i<=1)
-             break;
+            if (i <= 1)
+                break;
             i--;
             // printf("\nsubtracted i\n");
-
-
         }
-        if(i==0)
+        if (i == 0)
         {
             break;
         }
 
-        for(long k=piv-1;k>0;k--)
+        for (long k = piv - 1; k > 0; k--)
         {
-            if(elem(m,i,k)!=0)
+            if (elem(m, i, k) != 0)
             {
-                piv=k;
+                piv = k;
             }
         }
-
     }
-
+    normalizepivotdata(ret);
     return ret;
 }
 matrix *augmented_matrix(matrix *m, dtype *a)
@@ -400,63 +433,55 @@ matrix *droprow(matrix *m, long row)
 
 matrix *drop_zerorows(matrix *m)
 {
-    long flag=0;
+    long flag = 0;
     long *arr;
-    long arrindex=0;
-    long initialrows=m->row;
-    arr=calloc(m->row,sizeof(long));
-    for(long i=0;i<m->row;i++)
+    long arrindex = 0;
+    long initialrows = m->row;
+    arr = calloc(m->row, sizeof(long));
+    for (long i = 0; i < m->row; i++)
     {
-        flag=0;
-        for(long j=0;j<m->col;j++)
+        flag = 0;
+        for (long j = 0; j < m->col; j++)
         {
-            if(elem(m,i,j)!=0)
+            if (elem(m, i, j) != 0)
             {
-                flag=1;
+                flag = 1;
             }
-
         }
-        if (flag==0)
+        if (flag == 0)
         {
-            arr[arrindex]=i;
+            arr[arrindex] = i;
             arrindex++;
-
         }
-
-
     }
     // for(long i=0;i<arrindex;i++)
     // {
     //     printf("\n %d %d\n",arr[i]);
     // }
-    for(long i=0;i<arrindex;i++)
+    for (long i = 0; i < arrindex; i++)
     {
 
-       m= droprow(m,arr[i]-i);
+        m = droprow(m, arr[i] - i);
     }
     free(arr);
 
     return m;
-
-
 }
 
-matrix make_nullspacematrix(matrix *r){;}
+matrix make_nullspacematrix(matrix *r) { ; }
 
-matrix *nullspace(matrix *r,pivotdata *p)
+matrix *nullspace(matrix *r, pivotdata *p)
 {
     matrix *f;
-    f =drop_zerorows(r);
-    f=dropcol_Fmaker(f,p);
+    f = drop_zerorows(r);
+    f = dropcol_Fmaker(f, p);
     // multiplying all of F with -1 scalar
-    for(long i=0;i<f->row;i++)
+    for (long i = 0; i < f->row; i++)
     {
-        rowmulconst(f,i,-1.0);
+        rowmulconst(f, i, -1.0);
     }
 
     return f;
-
-
 }
 // void makeF(matrix *m, pivotdata *p)
 // {
@@ -471,7 +496,7 @@ long main(long argc, char const *argv[])
     pivotdata *aa;
     m = input_matrix(m);
     m = input_augmentcolumn(m);
-    aa = rref(m,1);
+    aa = rref(m, 1);
     printmat(m);
     print_pivdata(aa);
     matrix *f;
