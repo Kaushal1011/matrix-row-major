@@ -176,11 +176,18 @@ void normalizepivotdata(pivotdata *p)
     }
 }
 
-void scalerref(matrix *m)
+void scalerref(matrix *m, long aug)
 {
-    for(long i=0;i<m->row;i++)
+    for (long i = 0; i < m->row; i++)
     {
-
+        for (long j = 0; j < m->col - aug; j++)
+        {
+            if (elem(m, i, j) != 0)
+            {
+                rowmulconst(m, i, 1 / elem(m, i, j));
+                break;
+            }
+        }
     }
 }
 
@@ -246,7 +253,6 @@ pivotdata *rref(matrix *m, long aug)
     //     }
     // }
 
-
     // start calculation for R
 
     long rstart = 0;
@@ -304,7 +310,7 @@ pivotdata *rref(matrix *m, long aug)
         }
     }
     normalizepivotdata(ret);
-    scalerref(m);
+    scalerref(m, aug);
     return ret;
 }
 matrix *augmented_matrix(matrix *m, dtype *a)
@@ -398,7 +404,6 @@ matrix *dropcol_Fmaker(matrix *m, pivotdata *p)
             }
         }
     }
-    newm = dropcol(newm, newm->col - 1);
 
     // free(m->arr);
     // free(m);
@@ -471,9 +476,14 @@ matrix *drop_zerorows(matrix *m)
 
 matrix make_nullspacematrix(matrix *r) { ; }
 
-matrix *nullspace(matrix *r, pivotdata *p)
+matrix *nullspace(matrix *r, pivotdata *p, long aug)
 {
     matrix *f;
+    //if we want to find nullspace of augmented matrix
+    if (aug == 1)
+    {
+        r = dropcol(r, r->col - 1);
+    }
     f = drop_zerorows(r);
     f = dropcol_Fmaker(f, p);
     // multiplying all of F with -1 scalar
