@@ -176,6 +176,14 @@ void normalizepivotdata(pivotdata *p)
     }
 }
 
+void scalerref(matrix *m)
+{
+    for(long i=0;i<m->row;i++)
+    {
+
+    }
+}
+
 pivotdata *rref(matrix *m, long aug)
 {
     pivotdata *ret;
@@ -238,15 +246,7 @@ pivotdata *rref(matrix *m, long aug)
     //     }
     // }
 
-    if (elem(m, (m->row - 1), (m->row) - 1) != 0)
-    {
-        ret->pivotindex[ret->num_pivot] = (m->row) - 1;
-        ret->num_pivot++;
-    }
-    // U calculation is complete
-    // check for last pivot
-    // printmat(m);
-    // printf("\n printed U debug");
+
     // start calculation for R
 
     long rstart = 0;
@@ -304,6 +304,7 @@ pivotdata *rref(matrix *m, long aug)
         }
     }
     normalizepivotdata(ret);
+    scalerref(m);
     return ret;
 }
 matrix *augmented_matrix(matrix *m, dtype *a)
