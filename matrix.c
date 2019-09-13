@@ -16,7 +16,6 @@ void swap(dtype *a, dtype *b)
     *a = *a - *b;
 }
 
-
 // Struct Matrix
 typedef struct matrix
 {
@@ -32,10 +31,7 @@ typedef struct pivotdata
     long *pivotindex;
 } pivotdata;
 
-
-
 // Matrix Management Function
-
 
 //Initialise Data inside Matrix
 void constructmatrix(matrix *m, long row1, long col1)
@@ -54,7 +50,7 @@ matrix *init(long row, long col)
     return m;
 }
 
-//Produce and Identity matrix
+//create  Identity matrix from zero matrix
 void eye(matrix *m)
 {
     long dim = (m->row <= m->col) ? m->row : m->col;
@@ -62,6 +58,14 @@ void eye(matrix *m)
     {
         elem(m, i, i) = 1;
     }
+}
+
+//Intialise and return an identity matrix of size NxM
+matrix *eyeinit(long row, long col)
+{
+    matrix *ret = init(row, col);
+    eye(ret);
+    return ret;
 }
 
 //Row Swap Operation
@@ -75,7 +79,7 @@ void rowswap(matrix *m, long r1, long r2)
 
 //Input Function For Matrix
 matrix *input_matrix(matrix *m)
-{   /*
+{ /*
         takes String input of rows
         tokenises it converts string to dtype(double as of now)
         saves it in Matrix->arr(row Major type)
@@ -338,7 +342,7 @@ pivotdata *rref(matrix *m, long aug)
             break;
         }
     }
-    long piv=0;
+    long piv = 0;
     for (long i = 0; i < m->col - aug; i++)
     {
         if (elem(m, rstart, i) != 0)
@@ -349,19 +353,20 @@ pivotdata *rref(matrix *m, long aug)
     }
     // printf("\n %d %d\n", rstart, piv);
 
-    long i=0,j=0,k=0;
+    long i = 0, j = 0, k = 0;
 
     //keep finding non zero pivots in non zero rows above
-    for ( i = rstart; i > 0; i--)
-    {   if (iszerorow(m, i, aug) != 1)
-            {
+    for (i = rstart; i > 0; i--)
+    {
+        if (iszerorow(m, i, aug) != 1)
+        {
             // if (i < 1)
             //     break;
             break;
             // printf("\nsubtracted i\n");
-            }
+        }
 
-        for ( k = 0; k < piv; k++)
+        for (k = 0; k < piv; k++)
         {
             if (elem(m, i, k) != 0)
             {
@@ -371,9 +376,8 @@ pivotdata *rref(matrix *m, long aug)
             }
         }
 
-
-        for ( j = i - 1; j >= 0; j--)
-        {  // printf("\ninside rref %d %d  elem\n",i,piv);
+        for (j = i - 1; j >= 0; j--)
+        { // printf("\ninside rref %d %d  elem\n",i,piv);
             if (elem(m, j, piv) != 0)
             {
                 subrowR(m, i, j, piv);
@@ -385,7 +389,6 @@ pivotdata *rref(matrix *m, long aug)
             // printmat(m);
             // printf("\n\n");
         }
-
     }
 
     normalizepivotdata(ret);
@@ -430,6 +433,21 @@ matrix *input_augmentcolumn(matrix *m)
     return ret;
 }
 
+//Matrix Function to copy rows from one matrix into other matrix
+void mat_rowcopy(matrix *m, long rm, matrix *n, long rn)
+{
+    if (m->col != n->col)
+    {
+        return;
+    }
+    else
+    {
+        for (long i = 0; i < m->col; i++)
+        {
+            elem(m, rm, i) = elem(n, rn, i);
+        }
+    }
+}
 
 // Matrix function Specific for NULLSPACE calculation
 
@@ -466,7 +484,6 @@ matrix *dropcol_Fmaker(matrix *m, pivotdata *p)
     // free(m);
     return newm;
 }
-
 
 //drops all zero rows present in [I ,F] matrix
 matrix *drop_zerorows(matrix *m)
@@ -523,9 +540,37 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug)
         rowmulconst(f, i, -1.0);
     }
 
-    return f;
-}
+    //intitlise NULLSPACE  matrix
+    matrix *nullmat = init(2 * f->row, f->col);
+    matrix *I=eyeinit(f->row,f->col);
+    long trav[nullmat->row];
+    for(long i=0;i<nullmat->row;i++)
+    {
+        trav[i]=0;
+    }
 
+    //create NULLSPACE matrix from -F and I
+    for(long i=0;i<p->num_pivot;i++)
+    {
+        mat_rowcopy(nullmat,p->pivotindex[i],f,i);
+        trav[p->pivotindex[i]]=1;
+    }
+    long Irow=0;
+    for(long i=0;i<nullmat->row;i++)
+    {
+        if(trav[i]==0)
+        {
+            mat_rowcopy(nullmat,i,I,Irow);
+            Irow++;
+        }
+    }
+
+    free(f->arr);
+    free(f);
+    free(I->arr);
+    free(I);
+    return nullmat;
+}
 
 //Utility for PivData
 void print_pivdata(pivotdata *aa)
@@ -549,7 +594,7 @@ long main(long argc, char const *argv[])
     printmat(m);
     print_pivdata(aa);
     matrix *f;
-    f = nullspace(m, aa,1);
+    f = nullspace(m, aa, 1);
     // matrix *e=init(f->col,f->col);
     // eye(e);
     printf("\n");
