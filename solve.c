@@ -66,12 +66,12 @@ matrix *solve(matrix *m) {
     //dont forget to free
     dtype *solution = extractsol(rref_m, pivotdata_m);
     // Check for Number Of Solutions
-    if (rank == m->row && rank == m->col) {
+    if (rank == m->row && rank == m->col-1) {
         printf("\nAx=B has a Unique Solution \n");
         // Extract Augmented Col
         printXp(solution, m->row);
     } else if (rank == m->row) {
-        printf("\nAx=b has infinitely many solutions ");
+        printf("\nAx=b has infinitely many solutions \n");
         // Extract Augmented col and Print it with Nullspace
         printXp(solution, m->row);
         printXn(nullspace_m);
