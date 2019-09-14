@@ -198,6 +198,7 @@ void rowmulconst(matrix *m, long row, double scalar) {
     }
 }
 
+
 // Check If a Row is zero return 1 if row is not 0
 long iszerorow(matrix *m, long row, long aug) {
     long flag = 0;
@@ -252,7 +253,8 @@ pivotdata *rref(matrix *m, long aug) {
     ret->pivotindex = calloc(dim * 2, sizeof(long));
 
     // Logic to compute U.
-    for (long i = 0; i < m->row - 1; i++) {
+    long ndim=(m->row>m->col-1)?m->col-1:m->row;
+    for (long i = 0; i < ndim ; i++) {
         if (elem(m, i, i) == 0) {
             long j = 0;
             long flag = 0;
@@ -277,6 +279,8 @@ pivotdata *rref(matrix *m, long aug) {
         // Save Pivots
         ret->pivotindex[ret->num_pivot] = i;
         ret->num_pivot++;
+        // printf("\nnum_pivot %d pivindes %d\n  ",ret->num_pivot,i);
+
         for (long k = i + 1; k < m->row; k++) {
             // printf("\n printed u debug %d %d %d %lf\n
             // ",i,k,m->row,elem(m,k,i));
@@ -306,6 +310,7 @@ pivotdata *rref(matrix *m, long aug) {
     long piv = 0;
     for (long i = 0; i < m->col - aug; i++) {
         if (elem(m, rstart, i) != 0) {
+            printf("\nrstart %d piv %d\n  ",rstart,i);
             piv = i;
             ret->pivotindex[ret->num_pivot] = piv;
             ret->num_pivot++;
@@ -331,6 +336,7 @@ pivotdata *rref(matrix *m, long aug) {
             if (elem(m, i, k) != 0) {
                 piv = k;
                 // printf("\nrref calculation debug \n%d\n",piv);
+                printf("\nrstart %d piv %d\n  ",i,piv);
                 ret->pivotindex[ret->num_pivot] = piv;
                 ret->num_pivot++;
                 break;
