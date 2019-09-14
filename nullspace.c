@@ -73,13 +73,13 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     // if we want to find nullspace of augmented matrix
     if (aug == 1) {
         r = dropcol(r, r->col - 1);
-        printf("\ndropped aug \n");
+        // printf("\ndropped aug \n");
     }
     f = drop_zerorows(r);
-    printf("\ndropped zero rows \n");
+    // printf("\ndropped zero rows \n");
 
     f = dropcol_Fmaker(f, p);
-    printf("\n Successfully made F \n");
+    // printf("\n Successfully made F \n");
     // multiplying all of F with -1 scalar
     if (f == NULL) {
         return init(1, 1);
@@ -87,7 +87,7 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     for (long i = 0; i < f->row; i++) {
         rowmulconst(f, i, -1.0);
     }
-    printf("\n Successfully made -F \n");
+    // printf("\n Successfully made -F \n");
     // intitlise NULLSPACE  matrix
     matrix *nullmat = init(cc, f->col);
     matrix *I = eyeinit(cc - f->row, f->col);

@@ -262,18 +262,15 @@ pivotdata *rref(matrix *m, long aug) {
     // Logic to compute U.
     long ndim = (m->row > m->col - aug) ? m->col - aug : m->row;
     long pivstart = 0;
-    for (long z = 0; z < m->col; z++) {
-        if (iszerocol(m, z) == 1) {
-            pivstart = z;
-            break;
-        }
-    }
+
 
     for (long i = 0; i < ndim; i++) {
 
         for (long z = i; z < m->col-aug; z++) {
             if (iszerocol(m, z) == 1) {
                 pivstart = z;
+                // printf("\nFirst Pivot  %d \n",z);
+
                 break;
             }else
             {
@@ -281,7 +278,6 @@ pivotdata *rref(matrix *m, long aug) {
             }
 
         }
-
         if (elem(m, i, pivstart) == 0) {
             long j = 0;
             long flag = 0;
@@ -312,9 +308,9 @@ pivotdata *rref(matrix *m, long aug) {
         for (long k = i + 1; k < m->row; k++) {
             // printf("\n printed u debug %d %d %d %lf\n
             // ",i,k,m->row,elem(m,k,i));
-            if (elem(m, k, i) != 0) {
+            if (elem(m, k, pivstart) != 0) {
                 subrowR(m, i, k, pivstart);
-                // printf("\n printed u debug %d %d %d %lf\n
+                // printf("\n printed u debug %d %d %d \n",i,k,pivstart);
                 // ",i,k,m->row,elem(m,k,i)); printmat(m); printf("\n\n");
             }
         }

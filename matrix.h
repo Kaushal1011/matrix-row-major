@@ -54,4 +54,6 @@ long checkconsitency(matrix *m, pivotdata *p);
 void printXn(matrix *m);
 void printXp(dtype *sol,long len);
 
+matrix *solvegeneral(matrix *m);
+
 #endif // MATRIX_H
