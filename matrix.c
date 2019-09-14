@@ -22,9 +22,14 @@ void constructmatrix(matrix *m, long row1, long col1) {
 
 // Initialise Matrix in memory
 matrix *init(long row, long col) {
-    matrix *m = calloc(1, sizeof(matrix));
-    constructmatrix(m, row, col);
-    return m;
+    if (row > 0 && col > 0) {
+        matrix *m = calloc(1, sizeof(matrix));
+        constructmatrix(m, row, col);
+        return m;
+    } else {
+        printf("Warning:Tried to Init Zero Matrix");
+        return NULL;
+    }
 }
 
 // create  Identity matrix from zero matrix
@@ -96,15 +101,18 @@ void printmat(matrix *m) {
 
 // Matrix Function to drop Cols
 matrix *dropcol(matrix *m, long colindex) {
+
     long k = 0;
     matrix *newm = init(m->row, m->col - 1);
-    for (long i = 0; i < m->row; i++) {
-        k = 0;
-        for (long j = 0; j < m->col; j++) {
+    if (newm != NULL) {
+        for (long i = 0; i < m->row; i++) {
+            k = 0;
+            for (long j = 0; j < m->col; j++) {
 
-            if (j != colindex) {
-                elem(newm, i, k) = elem(m, i, j);
-                k++;
+                if (j != colindex) {
+                    elem(newm, i, k) = elem(m, i, j);
+                    k++;
+                }
             }
         }
     }
@@ -129,18 +137,20 @@ void subrow(matrix *m, long r1, long r2) {
 // Matrix function to drop rows
 matrix *droprow(matrix *m, long row) {
     matrix *newm = init(m->row - 1, m->col);
-    long k = 0;
-    long flag = 0;
-    for (long i = 0; i < m->row; i++) {
-        for (long j = 0; j < m->col; j++) {
-            if (i != row) {
-                elem(newm, k, j) = elem(m, i, j);
-                flag = 1;
+    if (newm != NULL) {
+        long k = 0;
+        long flag = 0;
+        for (long i = 0; i < m->row; i++) {
+            for (long j = 0; j < m->col; j++) {
+                if (i != row) {
+                    elem(newm, k, j) = elem(m, i, j);
+                    flag = 1;
+                }
             }
-        }
-        if (flag == 1) {
-            k++;
-            flag = 0;
+            if (flag == 1) {
+                k++;
+                flag = 0;
+            }
         }
     }
     free(m->arr);
@@ -275,6 +285,8 @@ pivotdata *rref(matrix *m, long aug) {
     for (long i = 0; i < m->col - aug; i++) {
         if (elem(m, rstart, i) != 0) {
             piv = i;
+            ret->pivotindex[ret->num_pivot] = piv;
+            ret->num_pivot++;
             break;
         }
     }
@@ -289,7 +301,7 @@ pivotdata *rref(matrix *m, long aug) {
         if (iszerorow(m, i, aug) != 1) {
             // if (i < 1)
             //     break;
-            break;
+            continue;
             // printf("\nsubtracted i\n");
         }
 
@@ -297,17 +309,16 @@ pivotdata *rref(matrix *m, long aug) {
             if (elem(m, i, k) != 0) {
                 piv = k;
                 // printf("\nrref calculation debug \n%d\n",piv);
+                ret->pivotindex[ret->num_pivot] = piv;
+                ret->num_pivot++;
                 break;
             }
         }
 
-        for (j = i - 1; j >= 0;
-             j--) { // printf("\ninside rref %d %d  elem\n",i,piv);
+        for (j = i - 1; j >= 0; j--) {
+            // printf("\ninside rref %d %d  elem\n",i,piv);
             if (elem(m, j, piv) != 0) {
                 subrowR(m, i, j, piv);
-                // printf("\nrref calculation debug subrow \n%d\n",piv);
-                ret->pivotindex[ret->num_pivot] = piv;
-                ret->num_pivot++;
             }
             // printf("\ninside rref %d %d elem\n",i,piv);
             // printmat(m);

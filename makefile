@@ -15,4 +15,7 @@ nullspace.o: nullspace.c matrix.h
 	$(CC) $(CFLAGS) -c nullspace.c
 
 clean:
-	rm *.o main.out
+	del matrix.o
+	del main.o
+	del nullspace.o
+	main.out
