@@ -22,3 +22,4 @@ clean:
 	del main.o
 	del nullspace.o
 	del main.out
+	del solve.o
