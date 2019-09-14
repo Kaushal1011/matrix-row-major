@@ -18,4 +18,4 @@ clean:
 	del matrix.o
 	del main.o
 	del nullspace.o
-	main.out
+	del main.out
