@@ -29,12 +29,26 @@ matrix *init(long row, long col) {
     } else {
         if (debug == 1) {
             printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
-            printf(
-                "\nYoure seeing this warning because debug is defined to be 1\n\n");
+            printf("\nYoure seeing this warning because debug is defined to be "
+                   "1\n\n");
         }
 
         return NULL;
     }
+}
+
+//Function to return a copy of matrix
+matrix *copy(matrix *m)
+{
+    matrix *ret =init(m->row,m->col);
+    for(long i=0;i<m->row;i++)
+    {
+        for(long j=0;j<m->col;j++)
+        {
+            elem(ret,i,j)=elem(m,i,j);
+        }
+    }
+    return ret;
 }
 
 // create  Identity matrix from zero matrix
@@ -184,7 +198,7 @@ void rowmulconst(matrix *m, long row, double scalar) {
     }
 }
 
-// Check If a Row is zero
+// Check If a Row is zero return 1 if row is not 0
 long iszerorow(matrix *m, long row, long aug) {
     long flag = 0;
     for (long i = 0; i < m->col - aug; i++) {
@@ -235,7 +249,7 @@ pivotdata *rref(matrix *m, long aug) {
     pivotdata *ret;
     ret = calloc(1, sizeof(pivotdata));
     long dim = m->col;
-    ret->pivotindex = calloc(dim*2, sizeof(long));
+    ret->pivotindex = calloc(dim * 2, sizeof(long));
 
     // Logic to compute U.
     for (long i = 0; i < m->row - 1; i++) {
@@ -273,7 +287,10 @@ pivotdata *rref(matrix *m, long aug) {
             }
         }
     }
-
+    // printf("\n printed u debug\n");
+    // printmat(m);
+    // printf("\n\n");
+    // printmat(m);
     // start calculation for R
 
     // find first non zero row from botton and it first non zero element from

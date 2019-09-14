@@ -21,9 +21,11 @@ typedef struct pivotdata {
     long *pivotindex;
 } pivotdata;
 
+
 void swap(dtype *a, dtype *b);
 void constructmatrix(matrix *m, long row1, long col1);
 matrix *init(long row, long col);
+matrix *copy(matrix *m);
 void eye(matrix *m);
 matrix *eyeinit(long row, long col);
 void rowswap(matrix *m, long r1, long r2);
@@ -45,5 +47,10 @@ matrix *dropcol_Fmaker(matrix *m, pivotdata *p);
 matrix *drop_zerorows(matrix *m);
 matrix *nullspace(matrix *r, pivotdata *p, long aug);
 void print_pivdata(pivotdata *aa);
+matrix *solve(matrix *m);
+dtype *extractsol(matrix *m,pivotdata *p);
+long checkconsitency(matrix *m, pivotdata *p);
+void printXn(matrix *m);
+void printXp(dtype *sol,long len);
 
 #endif // MATRIX_H

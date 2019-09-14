@@ -113,7 +113,8 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug) {
 
 // Utility for PivData
 void print_pivdata(pivotdata *aa) {
-    printf("\n %ld \n", aa->num_pivot);
+    printf("\n Number of Pivots(Rank of Matrix) %ld \n", aa->num_pivot);
+    printf("Pivots are at Index\n");
     for (long i = 0; i < aa->num_pivot; i++) {
         printf("%ld ", aa->pivotindex[i]);
     }
