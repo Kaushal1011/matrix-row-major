@@ -6,6 +6,7 @@
 #define dtype double
 // row major memory for matrix implementation
 #define elem(m, i, j) ((m)->arr[((i) * (m)->col) + (j)])
+#define debug 1
 
 // Struct Matrix
 typedef struct matrix {

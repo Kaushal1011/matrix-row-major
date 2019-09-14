@@ -7,22 +7,23 @@
 // drops pivot cols in F. i.e removes I from [I,F]
 matrix *dropcol_Fmaker(matrix *m, pivotdata *p) {
     matrix *newm = init(m->row, (m->col - (p->num_pivot)));
+    if (newm != NULL) {
+        long k = 0;
 
-    long k = 0;
-
-    for (long i = 0; i < m->row; i++) {
-        k = 0;
-        for (long j = 0; j < m->col; j++) {
-            long flag = 1;
-            for (long z = 0; z < p->num_pivot; z++) {
-                if (j == p->pivotindex[z]) {
-                    flag = 0;
-                    break;
+        for (long i = 0; i < m->row; i++) {
+            k = 0;
+            for (long j = 0; j < m->col; j++) {
+                long flag = 1;
+                for (long z = 0; z < p->num_pivot; z++) {
+                    if (j == p->pivotindex[z]) {
+                        flag = 0;
+                        break;
+                    }
                 }
-            }
-            if (flag == 1) {
-                elem(newm, i, k) = elem(m, i, j);
-                k++;
+                if (flag == 1) {
+                    elem(newm, i, k) = elem(m, i, j);
+                    k++;
+                }
             }
         }
     }
@@ -74,6 +75,10 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     f = drop_zerorows(r);
     f = dropcol_Fmaker(f, p);
     // multiplying all of F with -1 scalar
+    if(f==NULL)
+    {
+        return init(1,1);
+    }
     for (long i = 0; i < f->row; i++) {
         rowmulconst(f, i, -1.0);
     }

@@ -27,7 +27,12 @@ matrix *init(long row, long col) {
         constructmatrix(m, row, col);
         return m;
     } else {
-        printf("Warning:Tried to Init Zero Matrix");
+        if (debug == 1) {
+            printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
+            printf(
+                "\nYoure seeing this warning because debug is defined to be 1\n\n");
+        }
+
         return NULL;
     }
 }
@@ -336,13 +341,16 @@ pivotdata *rref(matrix *m, long aug) {
 matrix *augmented_matrix(matrix *m, const dtype *a) {
 
     matrix *new_m = init(m->row, m->col + 1);
-    for (long i = 0; i < new_m->row; i++) {
-        for (long j = 0; j < new_m->col; j++) {
-            elem(new_m, i, j) = elem(m, i, j);
+    if (new_m != NULL) {
+
+        for (long i = 0; i < new_m->row; i++) {
+            for (long j = 0; j < new_m->col; j++) {
+                elem(new_m, i, j) = elem(m, i, j);
+            }
         }
-    }
-    for (long i = 0; i < new_m->row; i++) {
-        elem(new_m, i, new_m->col - 1) = a[i];
+        for (long i = 0; i < new_m->row; i++) {
+            elem(new_m, i, new_m->col - 1) = a[i];
+        }
     }
     free(m->arr);
     free(m);
