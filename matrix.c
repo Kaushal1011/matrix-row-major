@@ -234,8 +234,8 @@ pivotdata *rref(matrix *m, long aug) {
     // initialise Pivotdata pointer in the memory
     pivotdata *ret;
     ret = calloc(1, sizeof(pivotdata));
-    long dim = (m->row <= m->col) ? m->row : m->col;
-    ret->pivotindex = calloc(dim, sizeof(long));
+    long dim = m->col;
+    ret->pivotindex = calloc(dim*2, sizeof(long));
 
     // Logic to compute U.
     for (long i = 0; i < m->row - 1; i++) {
