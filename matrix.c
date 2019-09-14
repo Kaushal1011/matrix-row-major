@@ -253,7 +253,7 @@ pivotdata *rref(matrix *m, long aug) {
     ret->pivotindex = calloc(dim * 2, sizeof(long));
 
     // Logic to compute U.
-    long ndim=(m->row>m->col-1)?m->col-1:m->row;
+    long ndim=(m->row>m->col-aug)?m->col-aug:m->row;
     for (long i = 0; i < ndim ; i++) {
         if (elem(m, i, i) == 0) {
             long j = 0;
