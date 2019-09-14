@@ -2,6 +2,9 @@
 CC = gcc
 CFLAGS = -std=c11 -g
 
+main.exe: main.o matrix.o nullspace.o solve.o
+	$(CC) $(CFLAGS) *.o -o main.exe
+
 main.out: main.o matrix.o nullspace.o solve.o
 	$(CC) $(CFLAGS) *.o -o main.out
 
@@ -23,3 +26,4 @@ clean:
 	del nullspace.o
 	del main.out
 	del solve.o
+	del main.exe
