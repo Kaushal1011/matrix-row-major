@@ -37,15 +37,12 @@ matrix *init(long row, long col) {
     }
 }
 
-//Function to return a copy of matrix
-matrix *copy(matrix *m)
-{
-    matrix *ret =init(m->row,m->col);
-    for(long i=0;i<m->row;i++)
-    {
-        for(long j=0;j<m->col;j++)
-        {
-            elem(ret,i,j)=elem(m,i,j);
+// Function to return a copy of matrix
+matrix *copy(matrix *m) {
+    matrix *ret = init(m->row, m->col);
+    for (long i = 0; i < m->row; i++) {
+        for (long j = 0; j < m->col; j++) {
+            elem(ret, i, j) = elem(m, i, j);
         }
     }
     return ret;
@@ -198,7 +195,6 @@ void rowmulconst(matrix *m, long row, double scalar) {
     }
 }
 
-
 // Check If a Row is zero return 1 if row is not 0
 long iszerorow(matrix *m, long row, long aug) {
     long flag = 0;
@@ -243,6 +239,17 @@ void scalerref(matrix *m, long aug) {
     }
 }
 
+// Check for Zero Column returns 1 if col is not zero
+long iszerocol(matrix *m, long i) {
+    long zero = 0;
+    for (int j = 0; j < m->row; j++) {
+        if (elem(m, j, i) != 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 // Function to Compute RREF of a Matrix and return number of pivots and position
 // of pivots
 pivotdata *rref(matrix *m, long aug) {
@@ -253,13 +260,33 @@ pivotdata *rref(matrix *m, long aug) {
     ret->pivotindex = calloc(dim * 2, sizeof(long));
 
     // Logic to compute U.
-    long ndim=(m->row>m->col-aug)?m->col-aug:m->row;
-    for (long i = 0; i < ndim ; i++) {
-        if (elem(m, i, i) == 0) {
+    long ndim = (m->row > m->col - aug) ? m->col - aug : m->row;
+    long pivstart = 0;
+    for (long z = 0; z < m->col; z++) {
+        if (iszerocol(m, z) == 1) {
+            pivstart = z;
+            break;
+        }
+    }
+
+    for (long i = 0; i < ndim; i++) {
+
+        for (long z = i; z < m->col-aug; z++) {
+            if (iszerocol(m, z) == 1) {
+                pivstart = z;
+                break;
+            }else
+            {
+                pivstart=i;
+            }
+
+        }
+
+        if (elem(m, i, pivstart) == 0) {
             long j = 0;
             long flag = 0;
             for (j = i + 1; j < m->row; j++) {
-                if (elem(m, j, i) != 0) {
+                if (elem(m, j, pivstart) != 0) {
                     break;
                     flag = 1;
                 }
@@ -276,8 +303,9 @@ pivotdata *rref(matrix *m, long aug) {
             // printmat(m);
             // printf("\n\n ");
         }
+
         // Save Pivots
-        ret->pivotindex[ret->num_pivot] = i;
+        ret->pivotindex[ret->num_pivot] = pivstart;
         ret->num_pivot++;
         // printf("\nnum_pivot %d pivindes %d\n  ",ret->num_pivot,i);
 
@@ -285,7 +313,7 @@ pivotdata *rref(matrix *m, long aug) {
             // printf("\n printed u debug %d %d %d %lf\n
             // ",i,k,m->row,elem(m,k,i));
             if (elem(m, k, i) != 0) {
-                subrow(m, i, k);
+                subrowR(m, i, k, pivstart);
                 // printf("\n printed u debug %d %d %d %lf\n
                 // ",i,k,m->row,elem(m,k,i)); printmat(m); printf("\n\n");
             }
