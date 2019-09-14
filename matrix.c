@@ -310,7 +310,7 @@ pivotdata *rref(matrix *m, long aug) {
     long piv = 0;
     for (long i = 0; i < m->col - aug; i++) {
         if (elem(m, rstart, i) != 0) {
-            printf("\nrstart %d piv %d\n  ",rstart,i);
+            // printf("\nrstart %d piv %d\n  ",rstart,i);
             piv = i;
             ret->pivotindex[ret->num_pivot] = piv;
             ret->num_pivot++;
@@ -336,7 +336,7 @@ pivotdata *rref(matrix *m, long aug) {
             if (elem(m, i, k) != 0) {
                 piv = k;
                 // printf("\nrref calculation debug \n%d\n",piv);
-                printf("\nrstart %d piv %d\n  ",i,piv);
+                // printf("\nrstart %d piv %d\n  ",i,piv);
                 ret->pivotindex[ret->num_pivot] = piv;
                 ret->num_pivot++;
                 break;
