@@ -8,10 +8,8 @@ ____
 
 ## System of Linear Equations Solver
 
-- Kaushal Patil
-- AU1841040
-
-Open folder matrix-row-major and run make.To execute run main.out.
+- Open folder matrix-row-major and run make.
+- To execute run main.out.
 
 The program uses a matrix structure which contains an array(accessed as a row major matrix) and matrix dimensions
 
