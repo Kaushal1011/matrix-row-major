@@ -5,7 +5,7 @@
 int main(void) {
 
 
-    matrix *m ;
+    matrix *m =NULL;
     m=input_matrix(m);
     matrix *a=solve(m);
 

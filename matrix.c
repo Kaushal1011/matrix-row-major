@@ -248,7 +248,7 @@ void scalerref(matrix *m, long aug) {
 
 // Check for Zero Column returns 1 if col is not zero
 long iszerocol(matrix *m, long i,long from) {
-    long zero = 0;
+    // long zero = 0;
     for (int j = from; j < m->row; j++) {
         if (elem(m, j, i) != 0) {
             return 1;
