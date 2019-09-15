@@ -20,6 +20,15 @@ void constructmatrix(matrix *m, long row1, long col1) {
     m->arr = calloc(m->row * m->col, sizeof(dtype));
 }
 
+void FREE(matrix *m)
+{
+    if(m!=NULL)
+    {
+        free(m->arr);
+        free(m);
+    }
+}
+
 // Initialise Matrix in memory
 matrix *init(long row, long col) {
     if (row > 0 && col > 0) {
@@ -132,8 +141,7 @@ matrix *dropcol(matrix *m, long colindex) {
             }
         }
     }
-    free(m->arr);
-    free(m);
+    FREE(m);
     return newm;
 }
 
@@ -169,8 +177,7 @@ matrix *droprow(matrix *m, long row) {
             }
         }
     }
-    free(m->arr);
-    free(m);
+    FREE(m);
 
     return newm;
 }
@@ -399,8 +406,9 @@ matrix *augmented_matrix(matrix *m, const dtype *a) {
             elem(new_m, i, new_m->col - 1) = a[i];
         }
     }
-    free(m->arr);
-    free(m);
+    // free(m->arr);
+    // free(m);
+    FREE(m);
     return new_m;
 }
 
