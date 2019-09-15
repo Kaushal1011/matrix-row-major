@@ -3,7 +3,7 @@
 
 // Extracts solution from augmented rref
 dtype *extractsol(matrix *m, pivotdata *p) {
-    dtype *ret = calloc(m->col-1, sizeof(dtype));
+    dtype *ret = calloc(m->col - 1, sizeof(dtype));
 
     for (long i = 0; i < p->num_pivot; i++) {
         long zerocolcount = 0;
@@ -12,8 +12,10 @@ dtype *extractsol(matrix *m, pivotdata *p) {
                 zerocolcount++;
             }
         }
-        ret[p->pivotindex[i]] =
-            elem(m, p->pivotindex[i] - zerocolcount, m->col - 1);
+        if (p->pivotindex[i] - zerocolcount < m->row) {
+            ret[p->pivotindex[i]] =
+                elem(m, p->pivotindex[i] - zerocolcount, m->col - 1);
+        }
     }
     return ret;
 }
@@ -78,11 +80,11 @@ matrix *solve(matrix *m) {
     if (rank == m->row && rank == m->col - 1) {
         printf("\nAx=B has a Unique Solution \n");
         // Extract Augmented Col
-        printXp(solution, m->col-1);
+        printXp(solution, m->col - 1);
     } else if (rank == m->row) {
         printf("\nAx=b has infinitely many solutions \n");
         // Extract Augmented col and Print it with Nullspace
-        printXp(solution, m->col-1);
+        printXp(solution, m->col - 1);
         printXn(nullspace_m);
 
     } else if (rank == m->col - 1) {
@@ -90,7 +92,7 @@ matrix *solve(matrix *m) {
         // if consistent
         if (checkconsitency(rref_m, pivotdata_m) == 1) {
             printf("\nAx=B has a Unique Solution\n");
-            printXp(solution, m->col-1);
+            printXp(solution, m->col - 1);
         }
         // else
         else {
@@ -103,7 +105,7 @@ matrix *solve(matrix *m) {
         // if consistent
         if (checkconsitency(rref_m, pivotdata_m) == 1) {
             printf("\nAx=b has infinitely many solutions\n");
-            printXp(solution, m->col-1);
+            printXp(solution, m->col - 1);
             printXn(nullspace_m);
         } else {
             printf("\nAx=B has No Solution\n");
