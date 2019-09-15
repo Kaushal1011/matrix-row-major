@@ -116,12 +116,15 @@ matrix *solve(matrix *m) {
         }
         // else
     }
-    free(rref_m->arr);
-    free(rref_m);
+    // free(rref_m->arr);
+    // free(rref_m);
+    FREE(rref_m);
     free(pivotdata_m->pivotindex);
     free(pivotdata_m);
+
     free(solution);
-    free(temp->arr);
-    free(temp);
+    // free(temp->arr);
+    // free(temp);
+    FREE(temp);
     return nullspace_m;
 }

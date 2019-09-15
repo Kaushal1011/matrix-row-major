@@ -11,9 +11,9 @@ int main(void) {
 
     printf("\n\n\nNULLSPACE OF MATRIX IS(prints 0.00 if Nullspace only has Zero vector)\n\n\n");
     printmat(a);
-    // free(a->arr);
-    // free(a);
-    free(m->arr);
-    free(m);
+
+
+    FREE(m);
+    FREE(a);
     return 0;
 }
