@@ -19,7 +19,7 @@ The program uses a matrix structure which contains an array(accessed as a row ma
 
 some basic functions related to matrices are defined in matrix.c which are related to matrix operations such as row col swap,drop,subtract, generation of identity matrix and so on along with this rref() is also defined in matrix.c
 
-Functions related to finding the nullspace of a matrix from its rref form are defined in nullspace.c.In null space it extracts I and F and merges them pivot and free variable wise to produce a Nullspace matrix which contain vectors that span the nullspace.
+Functions related to finding the nullspace of a matrix from its rref form are defined in nullspace.c . In null space it extracts I and F and merges them according to pivot and free variables to produce a Nullspace matrix which contain vectors that span the nullspace.
 
 Finally Function related to solving a system linear equations by taking rref of its augmented form are defined in solve.c
 
