@@ -240,9 +240,9 @@ void scalerref(matrix *m, long aug) {
 }
 
 // Check for Zero Column returns 1 if col is not zero
-long iszerocol(matrix *m, long i) {
+long iszerocol(matrix *m, long i,long from) {
     long zero = 0;
-    for (int j = 0; j < m->row; j++) {
+    for (int j = from; j < m->row; j++) {
         if (elem(m, j, i) != 0) {
             return 1;
         }
@@ -267,7 +267,7 @@ pivotdata *rref(matrix *m, long aug) {
     for (long i = 0; i < ndim; i++) {
 
         for (long z = i; z < m->col-aug; z++) {
-            if (iszerocol(m, z) == 1) {
+            if (iszerocol(m, z,i) == 1) {
                 pivstart = z;
                 // printf("\nFirst Pivot  %d \n",z);
 

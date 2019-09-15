@@ -37,7 +37,7 @@ matrix *droprow(matrix *m, long row);
 void subrowR(matrix *m, long r1, long r2, long piv);
 void rowmulconst(matrix *m, long row, double scalar);
 long iszerorow(matrix *m, long row, long aug);
-long iszerocol(matrix*m,long i);
+long iszerocol(matrix*m,long i,long from);
 void normalizepivotdata(pivotdata *p);
 void scalerref(matrix *m, long aug);
 pivotdata *rref(matrix *m, long aug);

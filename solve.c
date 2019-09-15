@@ -8,7 +8,7 @@ dtype *extractsol(matrix *m, pivotdata *p) {
     for (long i = 0; i < p->num_pivot; i++) {
         long zerocolcount = 0;
         for (long k = 0; k < p->pivotindex[i]; k++) {
-            if (iszerocol(m, k) == 0) {
+            if (iszerocol(m, k,0) == 0) {
                 zerocolcount++;
             }
         }
