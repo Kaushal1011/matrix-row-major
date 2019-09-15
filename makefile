@@ -1,9 +1,6 @@
 
 CC = gcc
-CFLAGS = -std=c11 -g -Wall -Wpedantic -Wextra
-
-main.exe: main.o matrix.o nullspace.o solve.o
-	$(CC) $(CFLAGS) main.o matrix.o nullspace.o solve.o -o main.exe
+CFLAGS = -std=c11 -g
 
 main.out: main.o matrix.o nullspace.o solve.o
 	$(CC) $(CFLAGS) main.o matrix.o nullspace.o solve.o -o main.out
@@ -21,9 +18,4 @@ solve.o: solve.c matrix.h pch.h
 	$(CC) $(CFLAGS) -c solve.c
 
 clean:
-	del matrix.o
-	del main.o
-	del nullspace.o
-	del main.out
-	del solve.o
-	del main.exe
+	rm *.o  main.out
