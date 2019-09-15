@@ -4,7 +4,7 @@
 
 int main(void) {
 
-    printf{"| System of Linear Equations Solver Using Matrices |\n"};
+    printf("| System of Linear Equations Solver Using Matrices |\n");
     printf("-Kaushal Patil\n");
     printf("AU1841040");
     printf("----------------------------------------------------------\n\n\n");
