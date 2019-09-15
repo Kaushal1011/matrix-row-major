@@ -38,7 +38,7 @@ matrix *drop_zerorows(matrix *m) {
     long flag = 0;
     long *arr;
     long arrindex = 0;
-    long initialrows = m->row;
+    // long initialrows = m->row;
     arr = calloc(m->row, sizeof(long));
     for (long i = 0; i < m->row; i++) {
         flag = 0;
@@ -68,7 +68,7 @@ matrix *drop_zerorows(matrix *m) {
 // generates matrix w nullspace vectors using F at free rows and I at pivot cols
 matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     matrix *f;
-    long rr = r->row;
+    // long rr = r->row;
     long cc = r->col-aug;
     // if we want to find nullspace of augmented matrix
     if (aug == 1) {
