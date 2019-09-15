@@ -68,7 +68,7 @@ matrix *drop_zerorows(matrix *m) {
 // generates matrix w nullspace vectors using F at free rows and I at pivot cols
 matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     matrix *f;
-    // long rr = r->row;
+    //long cc = r->col-aug;
     long cc = r->col-aug;
     // if we want to find nullspace of augmented matrix
     if (aug == 1) {
@@ -91,6 +91,9 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     // intitlise NULLSPACE  matrix
     matrix *nullmat = init(cc, f->col);
     matrix *I = eyeinit(cc - f->row, f->col);
+
+    // printmat(I);
+
     long trav[nullmat->row];
     for (long i = 0; i < nullmat->row; i++) {
         trav[i] = 0;
@@ -100,12 +103,18 @@ matrix *nullspace(matrix *r, pivotdata *p, long aug) {
     for (long i = 0; i < p->num_pivot; i++) {
         mat_rowcopy(nullmat, p->pivotindex[i], f, i);
         trav[p->pivotindex[i]] = 1;
+        // printf("\n\nDebug \n\n");
+        // printmat(nullmat);
     }
     long Irow = 0;
     for (long i = 0; i < nullmat->row; i++) {
+
+        // printf("\n i = %d trav[i] = %d Irow = %d \n",i,trav[i],Irow);
         if (trav[i] == 0) {
             mat_rowcopy(nullmat, i, I, Irow);
             Irow++;
+            // printf("\n\nDebug \n\n");
+            // printmat(nullmat);
         }
     }
     // printf("\nimmediate out\n");

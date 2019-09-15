@@ -51,7 +51,7 @@ void print_pivdata(pivotdata *aa);
 matrix *solve(matrix *m);
 dtype *extractsol(matrix *m,pivotdata *p);
 long checkconsitency(matrix *m, pivotdata *p);
-void printXn(matrix *m);
+void printXn();
 void printXp(dtype *sol,long len);
 
 matrix *solvegeneral(matrix *m);

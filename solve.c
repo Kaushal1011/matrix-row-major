@@ -45,9 +45,8 @@ void printXp(dtype *sol, long len) {
 }
 
 // prints nullspace matrix
-void printXn(matrix *m) {
+void printXn() {
     printf("Xn(nullspace solution) of the equation is :\n");
-    printmat(m);
 }
 
 // function that solves Ax=B prints no of solution(and solutions) and returns
@@ -69,8 +68,11 @@ matrix *solve(matrix *m) {
     // return this
     matrix *temp = copy(rref_m);
     matrix *nullspace_m = nullspace(temp, pivotdata_m, 1);
-    free(temp->arr);
-    free(temp);
+
+    // printf("\n\n Immediate Nullspace\n\n");
+    // printmat(nullspace_m);
+    // free(temp->arr);
+    // free(temp);
 
     long rank = pivotdata_m->num_pivot;
 
@@ -85,7 +87,8 @@ matrix *solve(matrix *m) {
         printf("\nAx=b has infinitely many solutions \n");
         // Extract Augmented col and Print it with Nullspace
         printXp(solution, m->col - 1);
-        printXn(nullspace_m);
+        printXn();
+        printmat(nullspace_m);
 
     } else if (rank == m->col - 1) {
         // Extract Augmented col and check consitency of zeros
@@ -106,7 +109,8 @@ matrix *solve(matrix *m) {
         if (checkconsitency(rref_m, pivotdata_m) == 1) {
             printf("\nAx=b has infinitely many solutions\n");
             printXp(solution, m->col - 1);
-            printXn(nullspace_m);
+            printXn();
+            printmat(nullspace_m);
         } else {
             printf("\nAx=B has No Solution\n");
         }
@@ -117,5 +121,7 @@ matrix *solve(matrix *m) {
     free(pivotdata_m->pivotindex);
     free(pivotdata_m);
     free(solution);
+    free(temp->arr);
+    free(temp);
     return nullspace_m;
 }
