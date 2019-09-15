@@ -6,9 +6,9 @@ int main(void) {
 
     printf("| System of Linear Equations Solver Using Matrices |\n");
     printf("-Kaushal Patil\n");
-    printf("AU1841040");
+    printf("AU1841040\n\n");
     printf("----------------------------------------------------------\n\n\n");
-    printf("This program \n Solves Equation Ax=b and prints x if it exists and then prints nullspace\n" );
+    printf("This program \nSolves Equation Ax=b and prints x if it exists and then prints nullspace\n" );
     printf("\nPlease be carefull in adding inputs to program.Before Taking input the format is specified\n");
     printf("For Example Input of A is in the Format\n");
     printf("enter one row at a time each element seperated by a space and press return/enter \n");
