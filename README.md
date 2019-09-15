@@ -28,4 +28,4 @@ main.c is the file that contains main function and is currently used to solve 1 
 All functions have comments over them that give brief idea of its functionality
 
 The following Algorithm was referenced to compute and build the rref() function
-[](https://www.math.purdue.edu/~shao92/documents/Algorithm%20REF.pdf)
+[rref algorithm](https://www.math.purdue.edu/~shao92/documents/Algorithm%20REF.pdf)
