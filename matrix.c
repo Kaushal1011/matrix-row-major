@@ -356,7 +356,7 @@ pivotdata *rref(matrix *m, long aug) {
             // printf("\nsubtracted i\n");
         }
 
-        for (k = 0; k < piv; k++) {
+        for (k = 0; k < m->col-aug; k++) {
             if (elem(m, i, k) != 0) {
                 piv = k;
                 // printf("\nrref calculation debug \n%d\n",piv);

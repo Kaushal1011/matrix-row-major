@@ -1,12 +1,12 @@
 
 CC = gcc
-CFLAGS = -std=c11 -g
+CFLAGS = -std=c11 -g -Wall -Wpedantic -Wextra
 
 main.exe: main.o matrix.o nullspace.o solve.o
-	$(CC) $(CFLAGS) *.o -o main.exe
+	$(CC) $(CFLAGS) main.o matrix.o nullspace.o solve.o -o main.exe
 
 main.out: main.o matrix.o nullspace.o solve.o
-	$(CC) $(CFLAGS) *.o -o main.out
+	$(CC) $(CFLAGS) main.o matrix.o nullspace.o solve.o -o main.out
 
 main.o: main.c matrix.h pch.h
 	$(CC) $(CFLAGS) -c main.c
