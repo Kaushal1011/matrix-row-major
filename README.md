@@ -8,8 +8,12 @@ ____
 
 ## System of Linear Equations Solver
 
+### To Run
+
 - Open folder matrix-row-major and run make.
 - To execute run main.out.
+
+### Details
 
 The program uses a matrix structure which contains an array(accessed as a row major matrix) and matrix dimensions
 
