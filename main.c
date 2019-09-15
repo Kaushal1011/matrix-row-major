@@ -13,7 +13,7 @@ int main(void) {
     printmat(a);
 
 
-    FREE(m);
+    // FREE(m);
     FREE(a);
     return 0;
 }

@@ -26,6 +26,7 @@ void FREE(matrix *m)
     {
         free(m->arr);
         free(m);
+        m=NULL;
     }
 }
 
