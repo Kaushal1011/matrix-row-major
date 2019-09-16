@@ -6,15 +6,10 @@ dtype *extractsol(matrix *m, pivotdata *p) {
     dtype *ret = calloc(m->col -1, sizeof(dtype));
 
     for (long i = 0; i < p->num_pivot; i++) {
-        long zerocolcount = 0;
-        for (long k = 0; k < p->pivotindex[i]; k++) {
-            if (iszerocol(m, k,0) == 0) {
-                zerocolcount++;
-            }
-        }
+
         if (p->pivotindex[i] - zerocolcount < m->row) {
             ret[p->pivotindex[i]] =
-                elem(m, i - zerocolcount, m->col - 1);
+                elem(m, i , m->col - 1);
                 // printf("\n %lf %d %lf \n",ret[p->pivotindex[i]],p->pivotindex[i],elem(m, i - zerocolcount, m->col - 1));
         }
     }
