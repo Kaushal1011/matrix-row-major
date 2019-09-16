@@ -3,7 +3,7 @@
 
 // Extracts solution from augmented rref
 dtype *extractsol(matrix *m, pivotdata *p) {
-    dtype *ret = calloc(m->col - 1, sizeof(dtype));
+    dtype *ret = calloc(m->col -1, sizeof(dtype));
 
     for (long i = 0; i < p->num_pivot; i++) {
         long zerocolcount = 0;
@@ -14,7 +14,8 @@ dtype *extractsol(matrix *m, pivotdata *p) {
         }
         if (p->pivotindex[i] - zerocolcount < m->row) {
             ret[p->pivotindex[i]] =
-                elem(m, p->pivotindex[i] - zerocolcount, m->col - 1);
+                elem(m, i - zerocolcount, m->col - 1);
+                // printf("\n %lf %d %lf \n",ret[p->pivotindex[i]],p->pivotindex[i],elem(m, i - zerocolcount, m->col - 1));
         }
     }
     return ret;
@@ -22,10 +23,20 @@ dtype *extractsol(matrix *m, pivotdata *p) {
 
 // checks if zero solution has zero rows
 long checkconsitency(matrix *m, pivotdata *p) {
-    dtype *rowindex = calloc(m->row, sizeof(dtype));
-    for (long i = 0; i < p->num_pivot; i++) {
-        rowindex[p->pivotindex[i]] = 1;
+    long rowindex[m->row];
+    for(long i=0;i<m->row;i++)
+    {
+        rowindex[i]=1;
     }
+    // printf("\n");
+    for (long i = 0; i < m->row; i++) {
+        if(iszerorow(m,i,1))
+        {
+            rowindex[i]=0;
+        }
+        // printf("%d ",p->pivotindex[i]);
+    }
+    printf("\n");
     for (long i = 0; i < m->row; i++) {
         if (rowindex[i] != 1) {
             if (iszerorow(m, i, 0) == 1) {
@@ -106,6 +117,7 @@ matrix *solve(matrix *m) {
         // Extract Augmented col and check consitency of zeros
         // Take Nullspace also
         // if consistent
+        // printf("\n%d\n",checkconsitency(rref_m, pivotdata_m));
         if (checkconsitency(rref_m, pivotdata_m) == 1) {
             printf("\nAx=b has infinitely many solutions\n");
             printXp(solution, m->col - 1);
