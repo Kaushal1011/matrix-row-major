@@ -14,7 +14,7 @@ dtype *extractsol(matrix *m, pivotdata *p) {
         }
         if (p->pivotindex[i] - zerocolcount < m->row) {
             ret[p->pivotindex[i]] =
-                elem(m, i - zerocolcount, m->col - 1);
+                elem(m, i , m->col - 1);
                 // printf("\n %lf %d %lf \n",ret[p->pivotindex[i]],p->pivotindex[i],elem(m, i - zerocolcount, m->col - 1));
         }
     }
@@ -30,7 +30,7 @@ long checkconsitency(matrix *m, pivotdata *p) {
     }
     // printf("\n");
     for (long i = 0; i < m->row; i++) {
-        if(iszerorow(m,i,1))
+        if(iszerorow(m,i,1)==0)
         {
             rowindex[i]=0;
         }
