@@ -1,5 +1,5 @@
 
-CC = gcc
+
 CFLAGS = -std=c11 -g
 
 main.out: main.o matrix.o nullspace.o solve.o
