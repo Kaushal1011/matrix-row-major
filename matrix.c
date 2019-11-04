@@ -20,13 +20,11 @@ void constructmatrix(matrix *m, long row1, long col1) {
     m->arr = calloc(m->row * m->col, sizeof(dtype));
 }
 
-void FREE(matrix *m)
-{
-    if(m!=NULL)
-    {
+void FREE(matrix *m) {
+    if (m != NULL) {
         free(m->arr);
         free(m);
-        m=NULL;
+        m = NULL;
     }
 }
 
@@ -35,6 +33,28 @@ matrix *init(long row, long col) {
     if (row > 0 && col > 0) {
         matrix *m = calloc(1, sizeof(matrix));
         constructmatrix(m, row, col);
+        return m;
+    } else {
+        if (debug == 1) {
+            printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
+            printf("\nYoure seeing this warning because debug is defined to be "
+                   "1\n\n");
+        }
+
+        return NULL;
+    }
+}
+
+matrix *initones(long row, long col) {
+    if (row > 0 && col > 0) {
+        matrix *m = calloc(1, sizeof(matrix));
+        constructmatrix(m, row, col);
+
+        for (long i = 0; i < m->row; i++) {
+            for (long j = 0; j < m->col; j++) {
+                elem(m, i, j) = 1;
+            }
+        }
         return m;
     } else {
         if (debug == 1) {
@@ -71,6 +91,48 @@ matrix *eyeinit(long row, long col) {
     matrix *ret = init(row, col);
     eye(ret);
     return ret;
+}
+
+matrix *concatmat(matrix *one, matrix *two) {
+    matrix *new = init(one->row, one->col + two->col);
+    for (long i = 0; i < one->row; i++) {
+        for (long j = 0; j < one->col; j++) {
+            elem(new, i, j) = elem(one, i, j);
+        }
+    }
+    for (long i = 0; i < two->row; i++) {
+        for (long j = 0; j < two->col; j++) {
+            elem(new, i, j + one->col) = elem(two, i, j);
+        }
+    }
+    return new;
+}
+
+matrix *transpose(matrix *m) {
+    matrix *new = init(m->col, m->row);
+    for (long i = 0; i < m->row; i++) {
+        for (long j = 0; j < m->col; j++) {
+            elem(new, j, i) = elem(m, i, j);
+        }
+    }
+    return new;
+}
+
+matrix *multiplymat(matrix *m, matrix *n) {
+    if (m->col != n->row) {
+        printf("M col %d N row %d\n", m->col, n->row);
+        printf("Cannot Multipy matrices \n!");
+        return NULL;
+    } else {
+        matrix *new = init(m->row, n->col);
+        for (long i = 0; i < m->row; ++i)
+            for (long j = 0; j < n->col; ++j)
+                for (long k = 0; k < m->col; ++k) {
+                    // result[i][j]+=a[i][k]*b[k][j];
+                    elem(new, i, j) += elem(m, i, k) * elem(n, k, j);
+                }
+        return new;
+    }
 }
 
 // Row Swap Operation
@@ -115,11 +177,52 @@ matrix *input_matrix(matrix *m) {
     return m;
 }
 
+matrix *input_vector(matrix *m) {
+    /**
+     * takes String input of rows
+     * tokenises it converts string to dtype(double as
+     * of now) saves it in Matrix->arr(row Major type)
+     */
+    char buf[BUFSIZ] = {0};
+    char *token = NULL;
+    const long NUMBASE = 10;
+    long row;
+    long col = 1;
+    printf("Enter elements of vector\n");
+    fgets(buf, BUFSIZ, stdin);
+    token = buf;
+    row = strtol(strtok(token, " "), NULL, NUMBASE);
+    m = init(row, col);
+    // constructmatrix(m,m->row,m->col);
+    printf("constructed matrix of %ld %ld\n", m->row, m->col);
+    printf("Enter values in vector in the form \na0 \na1\na2 \n.. \nan\n");
+    for (long i = 0; i < m->row; i++) {
+        fgets(buf, BUFSIZ, stdin);
+        token = buf;
+        elem(m, i, 0) = (double)strtol(strtok(token, " "), NULL, NUMBASE);
+        // elem(m,i,0) = 1;
+        for (long j = 1; j < m->col; j++) {
+            elem(m, i, j) = (double)strtol(strtok(NULL, " "), NULL, NUMBASE);
+            //    elem(m,i,j)=1;
+        }
+    }
+    return m;
+}
+
 // Function to Print Data of Matrix
 void printmat(matrix *m) {
     for (long i = 0; i < m->row; i++) {
         for (long j = 0; j < m->col; j++) {
             printf("%8.2lf  ", elem(m, i, j));
+        }
+        printf("\n");
+    }
+}
+
+void printmataccurate(matrix *m) {
+    for (long i = 0; i < m->row; i++) {
+        for (long j = 0; j < m->col; j++) {
+            printf("%18.8lf  ", elem(m, i, j));
         }
         printf("\n");
     }
@@ -248,7 +351,7 @@ void scalerref(matrix *m, long aug) {
 }
 
 // Check for Zero Column returns 1 if col is not zero
-long iszerocol(matrix *m, long i,long from) {
+long iszerocol(matrix *m, long i, long from) {
     // long zero = 0;
     for (int j = from; j < m->row; j++) {
         if (elem(m, j, i) != 0) {
@@ -271,20 +374,17 @@ pivotdata *rref(matrix *m, long aug) {
     long ndim = (m->row > m->col - aug) ? m->col - aug : m->row;
     long pivstart = 0;
 
-
     for (long i = 0; i < ndim; i++) {
 
-        for (long z = i; z < m->col-aug; z++) {
-            if (iszerocol(m, z,i) == 1) {
+        for (long z = i; z < m->col - aug; z++) {
+            if (iszerocol(m, z, i) == 1) {
                 pivstart = z;
                 // printf("\nFirst Pivot  %d \n",z);
 
                 break;
-            }else
-            {
-                pivstart=i;
+            } else {
+                pivstart = i;
             }
-
         }
         if (elem(m, i, pivstart) == 0) {
             long j = 0;
@@ -364,7 +464,7 @@ pivotdata *rref(matrix *m, long aug) {
             // printf("\nsubtracted i\n");
         }
 
-        for (k = 0; k < m->col-aug; k++) {
+        for (k = 0; k < m->col - aug; k++) {
             if (elem(m, i, k) != 0) {
                 piv = k;
                 // printf("\nrref calculation debug \n%d\n",piv);
@@ -434,4 +534,30 @@ void mat_rowcopy(matrix *m, long rm, matrix *n, long rn) {
     for (long i = 0; i < m->col; i++) {
         elem(m, rm, i) = elem(n, rn, i);
     }
+}
+
+matrix *inverse(matrix *m) {
+
+    matrix *e = eyeinit(m->row, m->col);
+    matrix *cat = concatmat(m, e);
+    FREE(e);
+    rref(cat, 0);
+    matrix *inv = init(m->row, m->col);
+    for (long i = 0; i < m->row; i++) {
+        for (long j = 0; j < m->col; j++) {
+            elem(inv, i, j) = elem(cat, i, j + m->col);
+        }
+    }
+    FREE(cat);
+    return inv;
+}
+
+matrix *inplacepowermat(matrix *m, long matpow) {
+    matrix *new = init(m->row, m->col);
+    for (long i = 0; i < m->row; i++) {
+        for (long j = 0; j < m->col; j++) {
+            elem(new, i, j) = pow(elem(m, i, j), matpow);
+        }
+    }
+    return new;
 }

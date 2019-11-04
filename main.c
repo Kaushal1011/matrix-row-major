@@ -1,30 +1,40 @@
-
 #include "matrix.h"
 #include "pch.h"
 
 int main(void) {
 
-    printf("| System of Linear Equations Solver Using Matrices |\n");
+    printf("| Least Square Regression Using Normal Form |\n");
+    printf("| At.A.x=At.b |\n");
+    printf("| Therefore x=(At.A)^-1.At.b |\n");
     printf("-Kaushal Patil\n");
     printf("AU1841040\n\n");
     printf("----------------------------------------------------------\n\n\n");
-    printf("This program \nSolves Equation Ax=b and prints x if it exists and then prints nullspace\n" );
-    printf("\nPlease be carefull in adding inputs to program.Before Taking input the format is specified\n");
-    printf("For Example Input of A is in the Format\n");
-    printf("enter one row at a time each element seperated by a space and press return/enter \n");
-    printf("Format of B is enter one element and press return/enter\nExample of format can be found in test.txt\n");
-    printf("This program will solve one system of equations in one run to test for another test case run again\n");
-    printf("----------------------------------------------------------\n\n\n");
 
-    matrix *m =NULL;
-    m=input_matrix(m);
-    matrix *a=solve(m);
+    matrix *A1;
+    printf("Enter Values of Matrix A for second degree curve fit\n");
+    A1 = input_matrix(A1);
 
-    printf("\n\n\nNULLSPACE OF MATRIX IS(prints 0.00 if Nullspace only has Zero vector)\n\n\n");
-    printmat(a);
+    printf("Enter Values of Matrix b\n");
+    matrix *b;
+    b = input_vector(b);
 
+    // FOR SECOND DEGREE CURVE WE AUGMENT A MATRIX  2ND POWER OF ELEMENTS OF A
 
-    // FREE(m);
-    FREE(a);
+    matrix *A2 = inplacepowermat(A1, 2);
+    matrix *A3 = concatmat(A1, A2);
+    matrix *ones = initones(19, 1);
+    matrix *A = concatmat(ones, A3);
+    // printmat(A);
+    matrix *x = least_square_regression(A, b);
+    printf("coefficients are \nin order \nc \nm1 \nm2 \n.. \n mn \n\n");
+    printf(" Therefore value of vector x is:\n\n");
+    printmataccurate(x);
+
+    FREE(A);
+    FREE(ones);
+    FREE(A3);
+    FREE(A2);
+    FREE(A1);
+
     return 0;
 }

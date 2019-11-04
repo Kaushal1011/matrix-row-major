@@ -2,18 +2,53 @@
 
 matrix operations written in c to find the rref form and  nullspace
 ____
-use examples in test.txt to test
+
+- use example in A.txt and b.txt to least square regression of second degree
+  - for easy testing use in .txt
+  - ```shell ./main.out < in.txt```
+
+- use example in test.txt to test linear equation solver
 
 ____
 
-## System of Linear Equations Solver
+## Least Square Regression (current main.c)
 
-### To Run
+### To Run LSR
+
+- Open folder matrix-row-major and run make.
+- To execute run main.out.
+- To test on give data run command
+
+  ```shell
+  ./main.out < in.txt
+  ```
+
+### Details of LSR
+
+Performs Least Square Regression on data of the form (A.x=b).
+
+Method:
+
+- we know At.A.x=At.b
+- therefore x=(At.A)-1.At.b
+
+About main:
+
+- takes input A
+- takes input b
+- performs least squares regression of second degree
+- prints a vector with coeffiecients of equation or the vector x.
+
+____
+
+## System of Linear Equations Solver (main in main_Linear_Equation_Solver.c)
+
+### To Run SoLES
 
 - Open folder matrix-row-major and run make.
 - To execute run main.out.
 
-### Details
+### Details of SoLES
 
 The program uses a matrix structure which contains an array(accessed as a row major matrix) and matrix dimensions
 
