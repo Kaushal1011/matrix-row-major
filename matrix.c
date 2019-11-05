@@ -34,15 +34,14 @@ matrix *init(long row, long col) {
         matrix *m = calloc(1, sizeof(matrix));
         constructmatrix(m, row, col);
         return m;
-    } else {
-        if (debug == 1) {
-            printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
-            printf("\nYoure seeing this warning because debug is defined to be "
-                   "1\n\n");
-        }
-
-        return NULL;
     }
+    if (debug == 1) {
+        printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
+        printf("\nYoure seeing this warning because debug is defined to be "
+               "1\n\n");
+    }
+
+    return NULL;
 }
 
 matrix *initones(long row, long col) {
@@ -56,15 +55,14 @@ matrix *initones(long row, long col) {
             }
         }
         return m;
-    } else {
-        if (debug == 1) {
-            printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
-            printf("\nYoure seeing this warning because debug is defined to be "
-                   "1\n\n");
-        }
-
-        return NULL;
     }
+    if (debug == 1) {
+        printf("\nWarning:Tried to Init Matrix zero rows or zero cols\n\n");
+        printf("\nYoure seeing this warning because debug is defined to be "
+               "1\n\n");
+    }
+
+    return NULL;
 }
 
 // Function to return a copy of matrix
@@ -120,19 +118,20 @@ matrix *transpose(matrix *m) {
 
 matrix *multiplymat(matrix *m, matrix *n) {
     if (m->col != n->row) {
-        printf("M col %d N row %d\n", m->col, n->row);
+        printf("M col %ld N row %ld\n", m->col, n->row);
         printf("Cannot Multipy matrices \n!");
         return NULL;
-    } else {
-        matrix *new = init(m->row, n->col);
-        for (long i = 0; i < m->row; ++i)
-            for (long j = 0; j < n->col; ++j)
-                for (long k = 0; k < m->col; ++k) {
-                    // result[i][j]+=a[i][k]*b[k][j];
-                    elem(new, i, j) += elem(m, i, k) * elem(n, k, j);
-                }
-        return new;
     }
+    matrix *new = init(m->row, n->col);
+    for (long i = 0; i < m->row; ++i) {
+        for (long j = 0; j < n->col; ++j) {
+            for (long k = 0; k < m->col; ++k) {
+                // result[i][j]+=a[i][k]*b[k][j];
+                elem(new, i, j) += elem(m, i, k) * elem(n, k, j);
+            }
+        }
+    }
+    return new;
 }
 
 // Row Swap Operation
@@ -382,9 +381,8 @@ pivotdata *rref(matrix *m, long aug) {
                 // printf("\nFirst Pivot  %d \n",z);
 
                 break;
-            } else {
-                pivstart = i;
             }
+            pivstart = i;
         }
         if (elem(m, i, pivstart) == 0) {
             long j = 0;

@@ -68,9 +68,9 @@ matrix *drop_zerorows(matrix *m) {
 
 // generates matrix w nullspace vectors using F at free rows and I at pivot cols
 matrix *nullspace(matrix *r, pivotdata *p, long aug) {
-    matrix *f=NULL;
-    //long cc = r->col-aug;
-    long cc = r->col-aug;
+    matrix *f = NULL;
+    // long cc = r->col-aug;
+    long cc = r->col - aug;
     // if we want to find nullspace of augmented matrix
     if (aug == 1) {
         r = dropcol(r, r->col - 1);

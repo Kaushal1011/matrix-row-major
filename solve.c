@@ -3,19 +3,20 @@
 
 // Extracts solution from augmented rref
 dtype *extractsol(matrix *m, pivotdata *p) {
-    dtype *ret = calloc(m->col -1, sizeof(dtype));
+    dtype *ret = calloc(m->col - 1, sizeof(dtype));
 
     for (long i = 0; i < p->num_pivot; i++) {
         long zerocolcount = 0;
         for (long k = 0; k < p->pivotindex[i]; k++) {
-            if (iszerocol(m, k,0) == 0) {
+            if (iszerocol(m, k, 0) == 0) {
                 zerocolcount++;
             }
         }
         if (p->pivotindex[i] - zerocolcount < m->row) {
-            ret[p->pivotindex[i]] =
-                elem(m, i , m->col - 1);
-                // printf("\n %lf %d %lf \n",ret[p->pivotindex[i]],p->pivotindex[i],elem(m, i - zerocolcount, m->col - 1));
+            ret[p->pivotindex[i]] = elem(m, i, m->col - 1);
+            // printf("\n %lf %d %lf
+            // \n",ret[p->pivotindex[i]],p->pivotindex[i],elem(m, i -
+            // zerocolcount, m->col - 1));
         }
     }
     return ret;
@@ -24,15 +25,13 @@ dtype *extractsol(matrix *m, pivotdata *p) {
 // checks if zero solution has zero rows
 long checkconsitency(matrix *m, pivotdata *p) {
     long rowindex[m->row];
-    for(long i=0;i<m->row;i++)
-    {
-        rowindex[i]=1;
+    for (long i = 0; i < m->row; i++) {
+        rowindex[i] = 1;
     }
     // printf("\n");
     for (long i = 0; i < m->row; i++) {
-        if(iszerorow(m,i,1)==0)
-        {
-            rowindex[i]=0;
+        if (iszerorow(m, i, 1) == 0) {
+            rowindex[i] = 0;
         }
         // printf("%d ",p->pivotindex[i]);
     }
@@ -51,14 +50,12 @@ long checkconsitency(matrix *m, pivotdata *p) {
 void printXp(dtype *sol, long len) {
     printf("Xp(particular solution) of the Equation is :\n");
     for (long i = 0; i < len; i++) {
-        printf("x%d %8.2lf\n", i, sol[i]);
+        printf("x%ld %8.2lf\n", i, sol[i]);
     }
 }
 
 // prints nullspace matrix
-void printXn() {
-    printf("Xn(nullspace solution) of the equation is :\n");
-}
+void printXn() { printf("Xn(nullspace solution) of the equation is :\n"); }
 
 // function that solves Ax=B prints no of solution(and solutions) and returns
 // nullspace matrix
