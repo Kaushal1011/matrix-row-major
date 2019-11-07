@@ -41,6 +41,8 @@ matrix *least_square_regression(matrix *A, matrix *b) {
 }
 
 matrix *predict(matrix *A, matrix *x) {
-    matrix *pred = multiplymat(A, transpose(x));
+    // matrix *new=transpose(x);
+    matrix *pred = multiplymat(A,x );
+    // FREE(new);
     return pred;
 }
