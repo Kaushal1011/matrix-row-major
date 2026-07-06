@@ -3,11 +3,14 @@
 #include "pch.h"
 // Utility Func
 
-// Swap data of two variables
+// Swap the values pointed to by a and b.
+// Uses a temporary so the swap is exact for floating-point dtype and
+// safe when a and b alias the same address (the arithmetic swap trick
+// loses precision for doubles and zeroes a self-swap).
 void swap(dtype *a, dtype *b) {
-    *a = *a + *b;
-    *b = *a - *b;
-    *a = *a - *b;
+    dtype tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 // Matrix Management Function
