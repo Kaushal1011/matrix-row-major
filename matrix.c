@@ -129,7 +129,6 @@ matrix *multiplymat(matrix *m, matrix *n) {
     for (long i = 0; i < m->row; ++i) {
         for (long j = 0; j < n->col; ++j) {
             for (long k = 0; k < m->col; ++k) {
-                // result[i][j]+=a[i][k]*b[k][j];
                 elem(new, i, j) += elem(m, i, k) * elem(n, k, j);
             }
         }
@@ -162,18 +161,15 @@ matrix *input_matrix(matrix *m) {
     row = strtol(strtok(token, " "), NULL, NUMBASE);
     col = strtol(strtok(NULL, " "), NULL, NUMBASE);
     m = init(row, col);
-    // constructmatrix(m,m->row,m->col);
     printf("constructed matrix of %ld %ld\n", m->row, m->col);
     printf("Enter values in matrix in the form \na00 a01 a02 .. a0n\n... ... "
            "... ... ...\nan0 an1 an2 .. ann\n");
     for (long i = 0; i < m->row; i++) {
         fgets(buf, BUFSIZ, stdin);
         token = buf;
-        elem(m, i, 0) = (double)strtol(strtok(token, " "), NULL, NUMBASE);
-        // elem(m,i,0) = 1;
+        elem(m, i, 0) = strtod(strtok(token, " "), NULL);
         for (long j = 1; j < m->col; j++) {
-            elem(m, i, j) = (double)strtol(strtok(NULL, " "), NULL, NUMBASE);
-            //    elem(m,i,j)=1;
+            elem(m, i, j) = strtod(strtok(NULL, " "), NULL);
         }
     }
     return m;
@@ -195,17 +191,14 @@ matrix *input_vector(matrix *m) {
     token = buf;
     row = strtol(strtok(token, " "), NULL, NUMBASE);
     m = init(row, col);
-    // constructmatrix(m,m->row,m->col);
     printf("constructed matrix of %ld %ld\n", m->row, m->col);
     printf("Enter values in vector in the form \na0 \na1\na2 \n.. \nan\n");
     for (long i = 0; i < m->row; i++) {
         fgets(buf, BUFSIZ, stdin);
         token = buf;
-        elem(m, i, 0) = (double)strtol(strtok(token, " "), NULL, NUMBASE);
-        // elem(m,i,0) = 1;
+        elem(m, i, 0) = strtod(strtok(token, " "), NULL);
         for (long j = 1; j < m->col; j++) {
-            elem(m, i, j) = (double)strtol(strtok(NULL, " "), NULL, NUMBASE);
-            //    elem(m,i,j)=1;
+            elem(m, i, j) = strtod(strtok(NULL, " "), NULL);
         }
     }
     return m;
@@ -261,7 +254,6 @@ void subrow(matrix *m, long r1, long r2) {
     for (long i = 0; i < m->col; i++) {
         elem(m, r2, i) -= arr[i];
     }
-    // return m;
 }
 
 // Matrix function to drop rows
@@ -298,7 +290,6 @@ void subrowR(matrix *m, long r1, long r2, long piv) {
     for (long i = 0; i < m->col; i++) {
         elem(m, r2, i) -= arr[i];
     }
-    // return m;
 }
 
 // Scalar Multiplication on Rows Of Matrix
@@ -354,7 +345,6 @@ void scalerref(matrix *m, long aug) {
 
 // Check for Zero Column returns 1 if col is not zero
 long iszerocol(matrix *m, long i, long from) {
-    // long zero = 0;
     for (int j = from; j < m->row; j++) {
         if (elem(m, j, i) != 0) {
             return 1;
@@ -381,8 +371,6 @@ pivotdata *rref(matrix *m, long aug) {
         for (long z = i; z < m->col - aug; z++) {
             if (iszerocol(m, z, i) == 1) {
                 pivstart = z;
-                // printf("\nFirst Pivot  %d \n",z);
-
                 break;
             }
             pivstart = i;
@@ -403,38 +391,24 @@ pivotdata *rref(matrix *m, long aug) {
 
             rowswap(m, j, i);
 
-            // debug comments
-            // printf("\n printed u debug %d %d \n",j,i);
-            // printmat(m);
-            // printf("\n\n ");
         }
 
         // Save Pivots
         ret->pivotindex[ret->num_pivot] = pivstart;
         ret->num_pivot++;
-        // printf("\nnum_pivot %d pivindes %d\n  ",ret->num_pivot,i);
 
         for (long k = i + 1; k < m->row; k++) {
-            // printf("\n printed u debug %d %d %d %lf\n
-            // ",i,k,m->row,elem(m,k,i));
             if (elem(m, k, pivstart) != 0) {
                 subrowR(m, i, k, pivstart);
-                // printf("\n printed u debug %d %d %d \n",i,k,pivstart);
-                // ",i,k,m->row,elem(m,k,i)); printmat(m); printf("\n\n");
             }
         }
     }
-    // printf("\n printed u debug\n");
-    // printmat(m);
-    // printf("\n\n");
-    // printmat(m);
     // start calculation for R
 
     // find first non zero row from botton and it first non zero element from
     // left
     long rstart = 0;
     for (long i = m->row - 1; i > 0; i--) {
-        // printf("\n %d \n",iszerorow(m,i,aug));
         if (iszerorow(m, i, aug) == 1) {
             rstart = i;
             break;
@@ -443,14 +417,12 @@ pivotdata *rref(matrix *m, long aug) {
     long piv = 0;
     for (long i = 0; i < m->col - aug; i++) {
         if (elem(m, rstart, i) != 0) {
-            // printf("\nrstart %d piv %d\n  ",rstart,i);
             piv = i;
             ret->pivotindex[ret->num_pivot] = piv;
             ret->num_pivot++;
             break;
         }
     }
-    // printf("\n %d %d\n", rstart, piv);
 
     long i = 0;
     long j = 0;
@@ -459,17 +431,12 @@ pivotdata *rref(matrix *m, long aug) {
     // keep finding non zero pivots in non zero rows above
     for (i = rstart; i > 0; i--) {
         if (iszerorow(m, i, aug) != 1) {
-            // if (i < 1)
-            //     break;
             continue;
-            // printf("\nsubtracted i\n");
         }
 
         for (k = 0; k < m->col - aug; k++) {
             if (elem(m, i, k) != 0) {
                 piv = k;
-                // printf("\nrref calculation debug \n%d\n",piv);
-                // printf("\nrstart %d piv %d\n  ",i,piv);
                 ret->pivotindex[ret->num_pivot] = piv;
                 ret->num_pivot++;
                 break;
@@ -477,13 +444,9 @@ pivotdata *rref(matrix *m, long aug) {
         }
 
         for (j = i - 1; j >= 0; j--) {
-            // printf("\ninside rref %d %d  elem\n",i,piv);
             if (elem(m, j, piv) != 0) {
                 subrowR(m, i, j, piv);
             }
-            // printf("\ninside rref %d %d elem\n",i,piv);
-            // printmat(m);
-            // printf("\n\n");
         }
     }
 
@@ -508,8 +471,6 @@ matrix *augmented_matrix(matrix *m, const dtype *a) {
             elem(new_m, i, new_m->col - 1) = a[i];
         }
     }
-    // free(m->arr);
-    // free(m);
     FREE(m);
     return new_m;
 }
