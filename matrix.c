@@ -5,9 +5,9 @@
 
 // Swap data of two variables
 void swap(dtype *a, dtype *b) {
-    *a = *a + *b;
-    *b = *a - *b;
-    *a = *a - *b;
+    dtype tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 // Matrix Management Function
@@ -24,7 +24,6 @@ void FREE(matrix *m) {
     if (m != NULL) {
         free(m->arr);
         free(m);
-        m = NULL;
     }
 }
 
@@ -258,7 +257,6 @@ void subrow(matrix *m, long r1, long r2) {
     for (long i = 0; i < m->col; i++) {
         elem(m, r2, i) -= arr[i];
     }
-    // return m;
 }
 
 // Matrix function to drop rows
@@ -295,7 +293,6 @@ void subrowR(matrix *m, long r1, long r2, long piv) {
     for (long i = 0; i < m->col; i++) {
         elem(m, r2, i) -= arr[i];
     }
-    // return m;
 }
 
 // Scalar Multiplication on Rows Of Matrix
@@ -390,7 +387,6 @@ pivotdata *rref(matrix *m, long aug) {
             for (j = i + 1; j < m->row; j++) {
                 if (elem(m, j, pivstart) != 0) {
                     break;
-                    flag = 1;
                 }
             }
 
@@ -505,8 +501,6 @@ matrix *augmented_matrix(matrix *m, const dtype *a) {
             elem(new_m, i, new_m->col - 1) = a[i];
         }
     }
-    // free(m->arr);
-    // free(m);
     FREE(m);
     return new_m;
 }
