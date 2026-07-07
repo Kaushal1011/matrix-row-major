@@ -5,9 +5,9 @@
 
 // Swap data of two variables
 void swap(dtype *a, dtype *b) {
-    *a = *a + *b;
-    *b = *a - *b;
-    *a = *a - *b;
+    dtype tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 // Matrix Management Function
